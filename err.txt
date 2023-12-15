@@ -1,0 +1,366 @@
+pw-server.cpp:5: warning: "NOMINMAX" redefined
+    5 | #define NOMINMAX
+      | 
+In file included from c:\mingw64\include\c++\12.2.0\x86_64-w64-mingw32\bits\c++config.h:655,
+                 from c:\mingw64\include\c++\12.2.0\iostream:38,
+                 from pw-server.cpp:1:
+c:\mingw64\include\c++\12.2.0\x86_64-w64-mingw32\bits\os_defines.h:45: note: this is the location of the previous definition
+   45 | #define NOMINMAX 1
+      | 
+pw-server.cpp: In function 'void WriteToAppArray(bool)':
+pw-server.cpp:390:44: error: no matching function for call to 'to_string(const std::map<std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<>, std::less<std::__cxx11::basic_string<char> >, std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<> > > >::key_type&)'
+  390 |             name = currDayAppData[to_string(it.key())]["name"];
+      |                                   ~~~~~~~~~^~~~~~~~~~
+In file included from c:\mingw64\include\c++\12.2.0\string:53,
+                 from c:\mingw64\include\c++\12.2.0\bits\locale_classes.h:40,
+                 from c:\mingw64\include\c++\12.2.0\bits\ios_base.h:41,
+                 from c:\mingw64\include\c++\12.2.0\ios:42,
+                 from c:\mingw64\include\c++\12.2.0\ostream:38,
+                 from c:\mingw64\include\c++\12.2.0\iostream:39:
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4012:3: note: candidate: 'std::string std::__cxx11::to_string(int)'
+ 4012 |   to_string(int __val)
+      |   ^~~~~~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4012:17: note:   no known conversion for argument 1 from 'const std::map<std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<>, std::less<std::__cxx11::basic_string<char> >, std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<> > > >::key_type' {aka 'const std::__cxx11::basic_string<char>'} to 'int'
+ 4012 |   to_string(int __val)
+      |             ~~~~^~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4026:3: note: candidate: 'std::string std::__cxx11::to_string(unsigned int)'
+ 4026 |   to_string(unsigned __val)
+      |   ^~~~~~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4026:22: note:   no known conversion for argument 1 from 'const std::map<std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<>, std::less<std::__cxx11::basic_string<char> >, std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<> > > >::key_type' {aka 'const std::__cxx11::basic_string<char>'} to 'unsigned int'
+ 4026 |   to_string(unsigned __val)
+      |             ~~~~~~~~~^~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4037:3: note: candidate: 'std::string std::__cxx11::to_string(long int)'
+ 4037 |   to_string(long __val)
+      |   ^~~~~~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4037:18: note:   no known conversion for argument 1 from 'const std::map<std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<>, std::less<std::__cxx11::basic_string<char> >, std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<> > > >::key_type' {aka 'const std::__cxx11::basic_string<char>'} to 'long int'
+ 4037 |   to_string(long __val)
+      |             ~~~~~^~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4051:3: note: candidate: 'std::string std::__cxx11::to_string(long unsigned int)'
+ 4051 |   to_string(unsigned long __val)
+      |   ^~~~~~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4051:27: note:   no known conversion for argument 1 from 'const std::map<std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<>, std::less<std::__cxx11::basic_string<char> >, std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<> > > >::key_type' {aka 'const std::__cxx11::basic_string<char>'} to 'long unsigned int'
+ 4051 |   to_string(unsigned long __val)
+      |             ~~~~~~~~~~~~~~^~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4062:3: note: candidate: 'std::string std::__cxx11::to_string(long long int)'
+ 4062 |   to_string(long long __val)
+      |   ^~~~~~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4062:23: note:   no known conversion for argument 1 from 'const std::map<std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<>, std::less<std::__cxx11::basic_string<char> >, std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<> > > >::key_type' {aka 'const std::__cxx11::basic_string<char>'} to 'long long int'
+ 4062 |   to_string(long long __val)
+      |             ~~~~~~~~~~^~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4074:3: note: candidate: 'std::string std::__cxx11::to_string(long long unsigned int)'
+ 4074 |   to_string(unsigned long long __val)
+      |   ^~~~~~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4074:32: note:   no known conversion for argument 1 from 'const std::map<std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<>, std::less<std::__cxx11::basic_string<char> >, std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<> > > >::key_type' {aka 'const std::__cxx11::basic_string<char>'} to 'long long unsigned int'
+ 4074 |   to_string(unsigned long long __val)
+      |             ~~~~~~~~~~~~~~~~~~~^~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4085:3: note: candidate: 'std::string std::__cxx11::to_string(float)'
+ 4085 |   to_string(float __val)
+      |   ^~~~~~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4085:19: note:   no known conversion for argument 1 from 'const std::map<std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<>, std::less<std::__cxx11::basic_string<char> >, std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<> > > >::key_type' {aka 'const std::__cxx11::basic_string<char>'} to 'float'
+ 4085 |   to_string(float __val)
+      |             ~~~~~~^~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4094:3: note: candidate: 'std::string std::__cxx11::to_string(double)'
+ 4094 |   to_string(double __val)
+      |   ^~~~~~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4094:20: note:   no known conversion for argument 1 from 'const std::map<std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<>, std::less<std::__cxx11::basic_string<char> >, std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<> > > >::key_type' {aka 'const std::__cxx11::basic_string<char>'} to 'double'
+ 4094 |   to_string(double __val)
+      |             ~~~~~~~^~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4103:3: note: candidate: 'std::string std::__cxx11::to_string(long double)'
+ 4103 |   to_string(long double __val)
+      |   ^~~~~~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4103:25: note:   no known conversion for argument 1 from 'const std::map<std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<>, std::less<std::__cxx11::basic_string<char> >, std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<> > > >::key_type' {aka 'const std::__cxx11::basic_string<char>'} to 'long double'
+ 4103 |   to_string(long double __val)
+      |             ~~~~~~~~~~~~^~~~~
+pw-server.cpp:391:41: error: no matching function for call to 'to_string(const std::map<std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<>, std::less<std::__cxx11::basic_string<char> >, std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<> > > >::key_type&)'
+  391 |             dir=currDayAppData[to_string(it.key())]["directory"];
+      |                                ~~~~~~~~~^~~~~~~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4012:3: note: candidate: 'std::string std::__cxx11::to_string(int)'
+ 4012 |   to_string(int __val)
+      |   ^~~~~~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4012:17: note:   no known conversion for argument 1 from 'const std::map<std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<>, std::less<std::__cxx11::basic_string<char> >, std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<> > > >::key_type' {aka 'const std::__cxx11::basic_string<char>'} to 'int'
+ 4012 |   to_string(int __val)
+      |             ~~~~^~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4026:3: note: candidate: 'std::string std::__cxx11::to_string(unsigned int)'
+ 4026 |   to_string(unsigned __val)
+      |   ^~~~~~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4026:22: note:   no known conversion for argument 1 from 'const std::map<std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<>, std::less<std::__cxx11::basic_string<char> >, std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<> > > >::key_type' {aka 'const std::__cxx11::basic_string<char>'} to 'unsigned int'
+ 4026 |   to_string(unsigned __val)
+      |             ~~~~~~~~~^~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4037:3: note: candidate: 'std::string std::__cxx11::to_string(long int)'
+ 4037 |   to_string(long __val)
+      |   ^~~~~~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4037:18: note:   no known conversion for argument 1 from 'const std::map<std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<>, std::less<std::__cxx11::basic_string<char> >, std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<> > > >::key_type' {aka 'const std::__cxx11::basic_string<char>'} to 'long int'
+ 4037 |   to_string(long __val)
+      |             ~~~~~^~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4051:3: note: candidate: 'std::string std::__cxx11::to_string(long unsigned int)'
+ 4051 |   to_string(unsigned long __val)
+      |   ^~~~~~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4051:27: note:   no known conversion for argument 1 from 'const std::map<std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<>, std::less<std::__cxx11::basic_string<char> >, std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<> > > >::key_type' {aka 'const std::__cxx11::basic_string<char>'} to 'long unsigned int'
+ 4051 |   to_string(unsigned long __val)
+      |             ~~~~~~~~~~~~~~^~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4062:3: note: candidate: 'std::string std::__cxx11::to_string(long long int)'
+ 4062 |   to_string(long long __val)
+      |   ^~~~~~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4062:23: note:   no known conversion for argument 1 from 'const std::map<std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<>, std::less<std::__cxx11::basic_string<char> >, std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<> > > >::key_type' {aka 'const std::__cxx11::basic_string<char>'} to 'long long int'
+ 4062 |   to_string(long long __val)
+      |             ~~~~~~~~~~^~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4074:3: note: candidate: 'std::string std::__cxx11::to_string(long long unsigned int)'
+ 4074 |   to_string(unsigned long long __val)
+      |   ^~~~~~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4074:32: note:   no known conversion for argument 1 from 'const std::map<std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<>, std::less<std::__cxx11::basic_string<char> >, std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<> > > >::key_type' {aka 'const std::__cxx11::basic_string<char>'} to 'long long unsigned int'
+ 4074 |   to_string(unsigned long long __val)
+      |             ~~~~~~~~~~~~~~~~~~~^~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4085:3: note: candidate: 'std::string std::__cxx11::to_string(float)'
+ 4085 |   to_string(float __val)
+      |   ^~~~~~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4085:19: note:   no known conversion for argument 1 from 'const std::map<std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<>, std::less<std::__cxx11::basic_string<char> >, std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<> > > >::key_type' {aka 'const std::__cxx11::basic_string<char>'} to 'float'
+ 4085 |   to_string(float __val)
+      |             ~~~~~~^~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4094:3: note: candidate: 'std::string std::__cxx11::to_string(double)'
+ 4094 |   to_string(double __val)
+      |   ^~~~~~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4094:20: note:   no known conversion for argument 1 from 'const std::map<std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<>, std::less<std::__cxx11::basic_string<char> >, std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<> > > >::key_type' {aka 'const std::__cxx11::basic_string<char>'} to 'double'
+ 4094 |   to_string(double __val)
+      |             ~~~~~~~^~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4103:3: note: candidate: 'std::string std::__cxx11::to_string(long double)'
+ 4103 |   to_string(long double __val)
+      |   ^~~~~~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4103:25: note:   no known conversion for argument 1 from 'const std::map<std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<>, std::less<std::__cxx11::basic_string<char> >, std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<> > > >::key_type' {aka 'const std::__cxx11::basic_string<char>'} to 'long double'
+ 4103 |   to_string(long double __val)
+      |             ~~~~~~~~~~~~^~~~~
+pw-server.cpp:392:43: error: no matching function for call to 'to_string(const std::map<std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<>, std::less<std::__cxx11::basic_string<char> >, std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<> > > >::key_type&)'
+  392 |             pid = currDayAppData[to_string(it.key())]["pid"];
+      |                                  ~~~~~~~~~^~~~~~~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4012:3: note: candidate: 'std::string std::__cxx11::to_string(int)'
+ 4012 |   to_string(int __val)
+      |   ^~~~~~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4012:17: note:   no known conversion for argument 1 from 'const std::map<std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<>, std::less<std::__cxx11::basic_string<char> >, std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<> > > >::key_type' {aka 'const std::__cxx11::basic_string<char>'} to 'int'
+ 4012 |   to_string(int __val)
+      |             ~~~~^~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4026:3: note: candidate: 'std::string std::__cxx11::to_string(unsigned int)'
+ 4026 |   to_string(unsigned __val)
+      |   ^~~~~~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4026:22: note:   no known conversion for argument 1 from 'const std::map<std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<>, std::less<std::__cxx11::basic_string<char> >, std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<> > > >::key_type' {aka 'const std::__cxx11::basic_string<char>'} to 'unsigned int'
+ 4026 |   to_string(unsigned __val)
+      |             ~~~~~~~~~^~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4037:3: note: candidate: 'std::string std::__cxx11::to_string(long int)'
+ 4037 |   to_string(long __val)
+      |   ^~~~~~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4037:18: note:   no known conversion for argument 1 from 'const std::map<std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<>, std::less<std::__cxx11::basic_string<char> >, std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<> > > >::key_type' {aka 'const std::__cxx11::basic_string<char>'} to 'long int'
+ 4037 |   to_string(long __val)
+      |             ~~~~~^~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4051:3: note: candidate: 'std::string std::__cxx11::to_string(long unsigned int)'
+ 4051 |   to_string(unsigned long __val)
+      |   ^~~~~~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4051:27: note:   no known conversion for argument 1 from 'const std::map<std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<>, std::less<std::__cxx11::basic_string<char> >, std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<> > > >::key_type' {aka 'const std::__cxx11::basic_string<char>'} to 'long unsigned int'
+ 4051 |   to_string(unsigned long __val)
+      |             ~~~~~~~~~~~~~~^~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4062:3: note: candidate: 'std::string std::__cxx11::to_string(long long int)'
+ 4062 |   to_string(long long __val)
+      |   ^~~~~~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4062:23: note:   no known conversion for argument 1 from 'const std::map<std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<>, std::less<std::__cxx11::basic_string<char> >, std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<> > > >::key_type' {aka 'const std::__cxx11::basic_string<char>'} to 'long long int'
+ 4062 |   to_string(long long __val)
+      |             ~~~~~~~~~~^~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4074:3: note: candidate: 'std::string std::__cxx11::to_string(long long unsigned int)'
+ 4074 |   to_string(unsigned long long __val)
+      |   ^~~~~~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4074:32: note:   no known conversion for argument 1 from 'const std::map<std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<>, std::less<std::__cxx11::basic_string<char> >, std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<> > > >::key_type' {aka 'const std::__cxx11::basic_string<char>'} to 'long long unsigned int'
+ 4074 |   to_string(unsigned long long __val)
+      |             ~~~~~~~~~~~~~~~~~~~^~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4085:3: note: candidate: 'std::string std::__cxx11::to_string(float)'
+ 4085 |   to_string(float __val)
+      |   ^~~~~~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4085:19: note:   no known conversion for argument 1 from 'const std::map<std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<>, std::less<std::__cxx11::basic_string<char> >, std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<> > > >::key_type' {aka 'const std::__cxx11::basic_string<char>'} to 'float'
+ 4085 |   to_string(float __val)
+      |             ~~~~~~^~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4094:3: note: candidate: 'std::string std::__cxx11::to_string(double)'
+ 4094 |   to_string(double __val)
+      |   ^~~~~~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4094:20: note:   no known conversion for argument 1 from 'const std::map<std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<>, std::less<std::__cxx11::basic_string<char> >, std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<> > > >::key_type' {aka 'const std::__cxx11::basic_string<char>'} to 'double'
+ 4094 |   to_string(double __val)
+      |             ~~~~~~~^~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4103:3: note: candidate: 'std::string std::__cxx11::to_string(long double)'
+ 4103 |   to_string(long double __val)
+      |   ^~~~~~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4103:25: note:   no known conversion for argument 1 from 'const std::map<std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<>, std::less<std::__cxx11::basic_string<char> >, std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<> > > >::key_type' {aka 'const std::__cxx11::basic_string<char>'} to 'long double'
+ 4103 |   to_string(long double __val)
+      |             ~~~~~~~~~~~~^~~~~
+pw-server.cpp:393:47: error: no matching function for call to 'to_string(const std::map<std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<>, std::less<std::__cxx11::basic_string<char> >, std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<> > > >::key_type&)'
+  393 |             t.seconds=currDayAppData[to_string(it.key())]["time_used"]["seconds"];
+      |                                      ~~~~~~~~~^~~~~~~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4012:3: note: candidate: 'std::string std::__cxx11::to_string(int)'
+ 4012 |   to_string(int __val)
+      |   ^~~~~~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4012:17: note:   no known conversion for argument 1 from 'const std::map<std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<>, std::less<std::__cxx11::basic_string<char> >, std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<> > > >::key_type' {aka 'const std::__cxx11::basic_string<char>'} to 'int'
+ 4012 |   to_string(int __val)
+      |             ~~~~^~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4026:3: note: candidate: 'std::string std::__cxx11::to_string(unsigned int)'
+ 4026 |   to_string(unsigned __val)
+      |   ^~~~~~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4026:22: note:   no known conversion for argument 1 from 'const std::map<std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<>, std::less<std::__cxx11::basic_string<char> >, std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<> > > >::key_type' {aka 'const std::__cxx11::basic_string<char>'} to 'unsigned int'
+ 4026 |   to_string(unsigned __val)
+      |             ~~~~~~~~~^~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4037:3: note: candidate: 'std::string std::__cxx11::to_string(long int)'
+ 4037 |   to_string(long __val)
+      |   ^~~~~~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4037:18: note:   no known conversion for argument 1 from 'const std::map<std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<>, std::less<std::__cxx11::basic_string<char> >, std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<> > > >::key_type' {aka 'const std::__cxx11::basic_string<char>'} to 'long int'
+ 4037 |   to_string(long __val)
+      |             ~~~~~^~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4051:3: note: candidate: 'std::string std::__cxx11::to_string(long unsigned int)'
+ 4051 |   to_string(unsigned long __val)
+      |   ^~~~~~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4051:27: note:   no known conversion for argument 1 from 'const std::map<std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<>, std::less<std::__cxx11::basic_string<char> >, std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<> > > >::key_type' {aka 'const std::__cxx11::basic_string<char>'} to 'long unsigned int'
+ 4051 |   to_string(unsigned long __val)
+      |             ~~~~~~~~~~~~~~^~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4062:3: note: candidate: 'std::string std::__cxx11::to_string(long long int)'
+ 4062 |   to_string(long long __val)
+      |   ^~~~~~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4062:23: note:   no known conversion for argument 1 from 'const std::map<std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<>, std::less<std::__cxx11::basic_string<char> >, std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<> > > >::key_type' {aka 'const std::__cxx11::basic_string<char>'} to 'long long int'
+ 4062 |   to_string(long long __val)
+      |             ~~~~~~~~~~^~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4074:3: note: candidate: 'std::string std::__cxx11::to_string(long long unsigned int)'
+ 4074 |   to_string(unsigned long long __val)
+      |   ^~~~~~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4074:32: note:   no known conversion for argument 1 from 'const std::map<std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<>, std::less<std::__cxx11::basic_string<char> >, std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<> > > >::key_type' {aka 'const std::__cxx11::basic_string<char>'} to 'long long unsigned int'
+ 4074 |   to_string(unsigned long long __val)
+      |             ~~~~~~~~~~~~~~~~~~~^~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4085:3: note: candidate: 'std::string std::__cxx11::to_string(float)'
+ 4085 |   to_string(float __val)
+      |   ^~~~~~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4085:19: note:   no known conversion for argument 1 from 'const std::map<std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<>, std::less<std::__cxx11::basic_string<char> >, std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<> > > >::key_type' {aka 'const std::__cxx11::basic_string<char>'} to 'float'
+ 4085 |   to_string(float __val)
+      |             ~~~~~~^~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4094:3: note: candidate: 'std::string std::__cxx11::to_string(double)'
+ 4094 |   to_string(double __val)
+      |   ^~~~~~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4094:20: note:   no known conversion for argument 1 from 'const std::map<std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<>, std::less<std::__cxx11::basic_string<char> >, std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<> > > >::key_type' {aka 'const std::__cxx11::basic_string<char>'} to 'double'
+ 4094 |   to_string(double __val)
+      |             ~~~~~~~^~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4103:3: note: candidate: 'std::string std::__cxx11::to_string(long double)'
+ 4103 |   to_string(long double __val)
+      |   ^~~~~~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4103:25: note:   no known conversion for argument 1 from 'const std::map<std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<>, std::less<std::__cxx11::basic_string<char> >, std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<> > > >::key_type' {aka 'const std::__cxx11::basic_string<char>'} to 'long double'
+ 4103 |   to_string(long double __val)
+      |             ~~~~~~~~~~~~^~~~~
+pw-server.cpp:394:47: error: no matching function for call to 'to_string(const std::map<std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<>, std::less<std::__cxx11::basic_string<char> >, std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<> > > >::key_type&)'
+  394 |             t.minutes=currDayAppData[to_string(it.key())]["time_used"]["minutes"];
+      |                                      ~~~~~~~~~^~~~~~~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4012:3: note: candidate: 'std::string std::__cxx11::to_string(int)'
+ 4012 |   to_string(int __val)
+      |   ^~~~~~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4012:17: note:   no known conversion for argument 1 from 'const std::map<std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<>, std::less<std::__cxx11::basic_string<char> >, std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<> > > >::key_type' {aka 'const std::__cxx11::basic_string<char>'} to 'int'
+ 4012 |   to_string(int __val)
+      |             ~~~~^~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4026:3: note: candidate: 'std::string std::__cxx11::to_string(unsigned int)'
+ 4026 |   to_string(unsigned __val)
+      |   ^~~~~~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4026:22: note:   no known conversion for argument 1 from 'const std::map<std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<>, std::less<std::__cxx11::basic_string<char> >, std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<> > > >::key_type' {aka 'const std::__cxx11::basic_string<char>'} to 'unsigned int'
+ 4026 |   to_string(unsigned __val)
+      |             ~~~~~~~~~^~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4037:3: note: candidate: 'std::string std::__cxx11::to_string(long int)'
+ 4037 |   to_string(long __val)
+      |   ^~~~~~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4037:18: note:   no known conversion for argument 1 from 'const std::map<std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<>, std::less<std::__cxx11::basic_string<char> >, std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<> > > >::key_type' {aka 'const std::__cxx11::basic_string<char>'} to 'long int'
+ 4037 |   to_string(long __val)
+      |             ~~~~~^~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4051:3: note: candidate: 'std::string std::__cxx11::to_string(long unsigned int)'
+ 4051 |   to_string(unsigned long __val)
+      |   ^~~~~~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4051:27: note:   no known conversion for argument 1 from 'const std::map<std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<>, std::less<std::__cxx11::basic_string<char> >, std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<> > > >::key_type' {aka 'const std::__cxx11::basic_string<char>'} to 'long unsigned int'
+ 4051 |   to_string(unsigned long __val)
+      |             ~~~~~~~~~~~~~~^~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4062:3: note: candidate: 'std::string std::__cxx11::to_string(long long int)'
+ 4062 |   to_string(long long __val)
+      |   ^~~~~~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4062:23: note:   no known conversion for argument 1 from 'const std::map<std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<>, std::less<std::__cxx11::basic_string<char> >, std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<> > > >::key_type' {aka 'const std::__cxx11::basic_string<char>'} to 'long long int'
+ 4062 |   to_string(long long __val)
+      |             ~~~~~~~~~~^~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4074:3: note: candidate: 'std::string std::__cxx11::to_string(long long unsigned int)'
+ 4074 |   to_string(unsigned long long __val)
+      |   ^~~~~~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4074:32: note:   no known conversion for argument 1 from 'const std::map<std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<>, std::less<std::__cxx11::basic_string<char> >, std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<> > > >::key_type' {aka 'const std::__cxx11::basic_string<char>'} to 'long long unsigned int'
+ 4074 |   to_string(unsigned long long __val)
+      |             ~~~~~~~~~~~~~~~~~~~^~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4085:3: note: candidate: 'std::string std::__cxx11::to_string(float)'
+ 4085 |   to_string(float __val)
+      |   ^~~~~~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4085:19: note:   no known conversion for argument 1 from 'const std::map<std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<>, std::less<std::__cxx11::basic_string<char> >, std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<> > > >::key_type' {aka 'const std::__cxx11::basic_string<char>'} to 'float'
+ 4085 |   to_string(float __val)
+      |             ~~~~~~^~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4094:3: note: candidate: 'std::string std::__cxx11::to_string(double)'
+ 4094 |   to_string(double __val)
+      |   ^~~~~~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4094:20: note:   no known conversion for argument 1 from 'const std::map<std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<>, std::less<std::__cxx11::basic_string<char> >, std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<> > > >::key_type' {aka 'const std::__cxx11::basic_string<char>'} to 'double'
+ 4094 |   to_string(double __val)
+      |             ~~~~~~~^~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4103:3: note: candidate: 'std::string std::__cxx11::to_string(long double)'
+ 4103 |   to_string(long double __val)
+      |   ^~~~~~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4103:25: note:   no known conversion for argument 1 from 'const std::map<std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<>, std::less<std::__cxx11::basic_string<char> >, std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<> > > >::key_type' {aka 'const std::__cxx11::basic_string<char>'} to 'long double'
+ 4103 |   to_string(long double __val)
+      |             ~~~~~~~~~~~~^~~~~
+pw-server.cpp:395:45: error: no matching function for call to 'to_string(const std::map<std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<>, std::less<std::__cxx11::basic_string<char> >, std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<> > > >::key_type&)'
+  395 |             t.hours=currDayAppData[to_string(it.key())]["time_used"]["hours"];
+      |                                    ~~~~~~~~~^~~~~~~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4012:3: note: candidate: 'std::string std::__cxx11::to_string(int)'
+ 4012 |   to_string(int __val)
+      |   ^~~~~~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4012:17: note:   no known conversion for argument 1 from 'const std::map<std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<>, std::less<std::__cxx11::basic_string<char> >, std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<> > > >::key_type' {aka 'const std::__cxx11::basic_string<char>'} to 'int'
+ 4012 |   to_string(int __val)
+      |             ~~~~^~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4026:3: note: candidate: 'std::string std::__cxx11::to_string(unsigned int)'
+ 4026 |   to_string(unsigned __val)
+      |   ^~~~~~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4026:22: note:   no known conversion for argument 1 from 'const std::map<std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<>, std::less<std::__cxx11::basic_string<char> >, std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<> > > >::key_type' {aka 'const std::__cxx11::basic_string<char>'} to 'unsigned int'
+ 4026 |   to_string(unsigned __val)
+      |             ~~~~~~~~~^~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4037:3: note: candidate: 'std::string std::__cxx11::to_string(long int)'
+ 4037 |   to_string(long __val)
+      |   ^~~~~~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4037:18: note:   no known conversion for argument 1 from 'const std::map<std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<>, std::less<std::__cxx11::basic_string<char> >, std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<> > > >::key_type' {aka 'const std::__cxx11::basic_string<char>'} to 'long int'
+ 4037 |   to_string(long __val)
+      |             ~~~~~^~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4051:3: note: candidate: 'std::string std::__cxx11::to_string(long unsigned int)'
+ 4051 |   to_string(unsigned long __val)
+      |   ^~~~~~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4051:27: note:   no known conversion for argument 1 from 'const std::map<std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<>, std::less<std::__cxx11::basic_string<char> >, std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<> > > >::key_type' {aka 'const std::__cxx11::basic_string<char>'} to 'long unsigned int'
+ 4051 |   to_string(unsigned long __val)
+      |             ~~~~~~~~~~~~~~^~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4062:3: note: candidate: 'std::string std::__cxx11::to_string(long long int)'
+ 4062 |   to_string(long long __val)
+      |   ^~~~~~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4062:23: note:   no known conversion for argument 1 from 'const std::map<std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<>, std::less<std::__cxx11::basic_string<char> >, std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<> > > >::key_type' {aka 'const std::__cxx11::basic_string<char>'} to 'long long int'
+ 4062 |   to_string(long long __val)
+      |             ~~~~~~~~~~^~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4074:3: note: candidate: 'std::string std::__cxx11::to_string(long long unsigned int)'
+ 4074 |   to_string(unsigned long long __val)
+      |   ^~~~~~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4074:32: note:   no known conversion for argument 1 from 'const std::map<std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<>, std::less<std::__cxx11::basic_string<char> >, std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<> > > >::key_type' {aka 'const std::__cxx11::basic_string<char>'} to 'long long unsigned int'
+ 4074 |   to_string(unsigned long long __val)
+      |             ~~~~~~~~~~~~~~~~~~~^~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4085:3: note: candidate: 'std::string std::__cxx11::to_string(float)'
+ 4085 |   to_string(float __val)
+      |   ^~~~~~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4085:19: note:   no known conversion for argument 1 from 'const std::map<std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<>, std::less<std::__cxx11::basic_string<char> >, std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<> > > >::key_type' {aka 'const std::__cxx11::basic_string<char>'} to 'float'
+ 4085 |   to_string(float __val)
+      |             ~~~~~~^~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4094:3: note: candidate: 'std::string std::__cxx11::to_string(double)'
+ 4094 |   to_string(double __val)
+      |   ^~~~~~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4094:20: note:   no known conversion for argument 1 from 'const std::map<std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<>, std::less<std::__cxx11::basic_string<char> >, std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<> > > >::key_type' {aka 'const std::__cxx11::basic_string<char>'} to 'double'
+ 4094 |   to_string(double __val)
+      |             ~~~~~~~^~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4103:3: note: candidate: 'std::string std::__cxx11::to_string(long double)'
+ 4103 |   to_string(long double __val)
+      |   ^~~~~~~~~
+c:\mingw64\include\c++\12.2.0\bits\basic_string.h:4103:25: note:   no known conversion for argument 1 from 'const std::map<std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<>, std::less<std::__cxx11::basic_string<char> >, std::allocator<std::pair<const std::__cxx11::basic_string<char>, nlohmann::json_abi_v3_11_2::basic_json<> > > >::key_type' {aka 'const std::__cxx11::basic_string<char>'} to 'long double'
+ 4103 |   to_string(long double __val)
+      |             ~~~~~~~~~~~~^~~~~
+In file included from c:\mingw64\x86_64-w64-mingw32\include\minwindef.h:163,
+                 from c:\mingw64\x86_64-w64-mingw32\include\windef.h:9,
+                 from c:\mingw64\x86_64-w64-mingw32\include\windows.h:69,
+                 from pw-server.cpp:10:
+pw-server.cpp: In function 'void CreateChildProcess()':
+pw-server.cpp:789:22: warning: ISO C++ forbids converting a string constant to 'PTSTR' {aka 'char*'} [-Wwrite-strings]
+  789 |       ErrorExit(TEXT("CreateProcess"));
+      |                      ^~~~~~~~~~~~~~~

@@ -49,7 +49,7 @@ int main(void)
 	HWND info;// = GetForegroundWindow();
 	
 	LPSTR str; LPSTR str2;
-    CHAR chBuf[BUFSIZE]; 
+   // CHAR chBuf[BUFSIZE]; 
 while(TRUE)
 {
    HANDLE hPipe;
@@ -67,7 +67,7 @@ while(TRUE)
 	info = GetForegroundWindow();
 	GetWindowTextA(info, str, GetWindowTextLength(info) + 1);
 	GetWindowThreadProcessId(info, &pid);
-	
+	std::cout<<str<<std::endl;
 	HANDLE Handle = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, FALSE, pid);
 	if (Handle)
 	{
@@ -75,28 +75,16 @@ while(TRUE)
 		DWORD buffSize = 16384;
 		//CHAR buffer[1024];
 		//if (GetModuleFileNameEx(Handle, 0, Buffer, MAX_PATH)) // Slower method
-		if(QueryFullProcessImageNameA(Handle, 0, chBuf, &buffSize))  //Faster method
+		if(QueryFullProcessImageNameA(Handle, 0, Buffer, &buffSize))  //Faster method
 		{
         // chBuf =Buffer;
-			std::cout << str << chBuf;  // At this point, buffer contains the full path to the executable
+			std::cout << str << Buffer<<std::endl;  // At this point, buffer contains the full path to the executable
 		}
 		else
 		{
 			std::cout << str << "Can't get executable path" << GetLastError() <<std::endl;// You better call GetLastError() here
 		}
-      if (hPipe != INVALID_HANDLE_VALUE)
-    {
-        WriteFile(hPipe,
-                  str,
-                  1024,   // = length of string + terminating '\0' !!!
-                  &dwWritten,
-                  NULL);
-
-        CloseHandle(hPipe);
-    }
-    else{
-      std::cout<<"couldn't write";
-    }
+     
 
       // bSuccess = WriteFile(hStdout, chBuf, dwRead, &dwWritten, NULL); 
 		// CloseHandle(Handle);
