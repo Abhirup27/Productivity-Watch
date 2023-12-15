@@ -4,7 +4,7 @@ Productivity Watch is developed by me only and I don't consider myself an expert
 This is a standalone software, it does not need any web browser or internet connection to function and uses the Win32 API and other open source libraries. **It does not share the data it records locally.**
 
 
-##Libraries used
+## Libraries-used
 - imgui
 - glfw
 - implot
