@@ -17,4 +17,6 @@ If you like the software and would like to support me in making this and more he
 You can donate to me using: 
 
 
-[<img width="100px" src="https://upload.wikimedia.org/wikipedia/commons/a/a4/Paypal_2014_logo.png?20150315064712">](https://paypal.me/abhirup27?country.x=IN&locale.x=en_GB)
+- [<img alt="Paypal" width="100px" src="https://upload.wikimedia.org/wikipedia/commons/a/a4/Paypal_2014_logo.png?20150315064712">](https://paypal.me/abhirup27?country.x=IN&locale.x=en_GB)
+- [<img alt="Scan UPI QR" width="100px" src="https://i.imgur.com/36amylh.jpeg">]
+
