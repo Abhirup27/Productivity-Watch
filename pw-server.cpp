@@ -20,7 +20,7 @@
 #include <mutex>
 #include<future> // for async
 #include <functional>
- 
+ #include<sstream>
 std::mutex m; // FOR ASYNC with pipe function
 #define DOTASK 0x8111
 
@@ -66,14 +66,15 @@ void genHash(std::string, std::string);
 
     unsigned int pid;
     std::string hash= "";
-    std::string name;
-    std::string dir;
+    std::string name="";
+    std::string dir="";
     Time time;
     bool use_pid;
     bool isEmpty=true;
    }*lastApp=NULL;
    std::vector<Application> apps;
    nlohmann::json currDayAppData;// =nlohmann::json::array();;
+   SYSTEMTIME CURR_DATE_TIME;
 struct X
 {
 
@@ -120,7 +121,7 @@ void PipeRead()
 }
 };
 X x;
-   auto a1 = std::async(std::launch::async,&X::PipeRead, &x);
+   
 
 
 
@@ -139,7 +140,10 @@ void WriteToAppArray(char Buffer[] =NULL,std::string name="",std::string dir="",
          || ( Buffer[index]!=' ' || (Buffer[index+1]!='F' && Buffer[index+2]!=':'))
         )  
         {
+            if(Buffer[index]>=0 &&Buffer[index]<128)
+            {
             name.push_back(Buffer[index]);
+            }
             index++;
         }
         index++;
@@ -169,7 +173,7 @@ void WriteToAppArray(char Buffer[] =NULL,std::string name="",std::string dir="",
     //std::cout<<"running";
     if(lastApp==NULL) //window title = name
     {
-       std::cout<<"running";
+       
         //then find the app using a hash in the array, if not found, create new
         Application newApp;
         newApp.name=name; newApp.dir=dir; newApp.pid=stoi(pid);
@@ -177,23 +181,30 @@ void WriteToAppArray(char Buffer[] =NULL,std::string name="",std::string dir="",
         {
             //std::cout<<"running";
             ResizeAppVector();
-            apps[pid[0]].name=name;
-            apps[pid[0]].dir=dir;
-            apps[pid[0]].pid=stoi(pid);
+            std::cout<<name<<pid<<dir<<pid[0];
+            apps[int(pid[0])- 48].name=name;
+            std::cout<<"running";
+            apps[int(pid[0])- 48].dir=dir;
+            apps[int(pid[0])- 48].pid=stoi(pid);
+            
             if(ti==NULL)
             {
-            apps[pid[0]].time.seconds=1;
-            apps[pid[0]].time.minutes=0;
-            apps[pid[0]].time.hours=0;
-             apps[pid[0]].isEmpty=false;
+            apps[int(pid[0])- 48].time.seconds=1;
+            apps[int(pid[0])- 48].time.minutes=0;
+            apps[int(pid[0])- 48].time.hours=0;
+             apps[int(pid[0])- 48].isEmpty=false;
+            
            }
            else{
-            apps[pid[0]].time.seconds=ti->seconds;
-            apps[pid[0]].time.minutes=ti->minutes;
-            apps[pid[0]].time.hours=ti->hours;
+            
+            apps[int(pid[0])- 48].time.seconds=ti->seconds;
+            apps[int(pid[0])- 48].time.minutes=ti->minutes;
+            apps[int(pid[0])- 48].time.hours=ti->hours;
+             apps[int(pid[0])- 48].isEmpty=false;
+             
            }
            // *lastApp = apps[pid[0]];
-            std::cout<<"it is at "<<pid[0] <<" index running for seconds: "<<apps[pid[0]].time.seconds<<std::endl;
+            std::cout<<"it is at "<<pid[0] <<" index running for seconds: "<<apps[int(pid[0])- 48].time.seconds<<std::endl;
         }
         else
         {
@@ -213,7 +224,7 @@ void WriteToAppArray(char Buffer[] =NULL,std::string name="",std::string dir="",
                     //std::cout<<"running";
                     if(apps[j].pid==stoi(pid))
                     {
-                        
+                        //std::cout<<std::endl<<apps[j].pid<<std::endl;
                         if(apps[j].name==newApp.name && apps[j].dir==newApp.dir)
                         {
                             apps[j].time.seconds++;
@@ -245,62 +256,64 @@ void WriteToAppArray(char Buffer[] =NULL,std::string name="",std::string dir="",
                               // SHA256 genhash;
                                //genhash.update(key);
                                //std::array<uint8_t, 32> digest = genhash.digest();
-                                
+                                std::stringstream ss;
+                                 ss<<appHash(key);
+                                 hash=ss.str();
+                                apps[j].hash= ss.str();
                                 
                                 //hash= genhash(key);
-                                apps[j].hash= appHash(key);//SHA256::toString(digest);
-
                             }
                             unsigned int t; 
                             if(currDayAppData.contains(hash))
                             { 
+                                std::cout<<currDayAppData[hash]<<std::endl;
                                 if(currDayAppData[hash]["pid"] !=apps[j].pid) //means the app has restarted since it was saved on the json
                                 {
-                                    t=currDayAppData[hash]["time"]["seconds"];
+                                    t=currDayAppData[hash]["time_used"]["seconds"];
                                     t= t+ apps[j].time.seconds;
-                                    currDayAppData[hash]["time"]["seconds"] = t;
-                                    if( currDayAppData[hash]["time"]["seconds"]>=60)
+                                    currDayAppData[hash]["time_used"]["seconds"] = t;
+                                    if( currDayAppData[hash]["time_used"]["seconds"]>=60)
                                     {
                                         t=t-60;
 
-                                        currDayAppData[hash]["time"]["seconds"] = t;
-                                        t = currDayAppData[hash]["time"]["minutes"];
+                                        currDayAppData[hash]["time_used"]["seconds"] = t;
+                                        t = currDayAppData[hash]["time_used"]["minutes"];
                                         t=t+1;
-                                        currDayAppData[hash]["time"]["minutes"]=t;
+                                        currDayAppData[hash]["time_used"]["minutes"]=t;
                                     }
-                                    if(currDayAppData[hash]["time"]["minutes"] >=60)
+                                    if(currDayAppData[hash]["time_used"]["minutes"] >=60)
                                     {
-                                        currDayAppData[hash]["time"]["minutes"]=0;
+                                        currDayAppData[hash]["time_used"]["minutes"]=0;
 
-                                        t = currDayAppData[hash]["time"]["hours"];
+                                        t = currDayAppData[hash]["time_used"]["hours"];
                                         t=t+1;
-                                        currDayAppData[hash]["time"]["hours"]=t;
+                                        currDayAppData[hash]["time_used"]["hours"]=t;
                                     }
-                                    t = currDayAppData[hash]["time"]["minutes"];
+                                    t = currDayAppData[hash]["time_used"]["minutes"];
                                     t = t + apps[j].time.minutes;
                                     
-                                    currDayAppData[hash]["time"]["minutes"] = t;
+                                    currDayAppData[hash]["time_used"]["minutes"] = t;
 
-                                    if(currDayAppData[hash]["time"]["minutes"]>=60)
+                                    if(currDayAppData[hash]["time_used"]["minutes"]>=60)
                                     {
-                                      t=  currDayAppData[hash]["time"]["hours"];
+                                      t=  currDayAppData[hash]["time_used"]["hours"];
                                       t = t +1;
-                                      currDayAppData[hash]["time"]["hours"] = t;
-                                       t = currDayAppData[hash]["time"]["minutes"];
-                                       t = currDayAppData[hash]["time"]["minutes"]; t=t-60;
-                                        currDayAppData[hash]["time"]["minutes"] = t;
+                                      currDayAppData[hash]["time_used"]["hours"] = t;
+                                       t = currDayAppData[hash]["time_used"]["minutes"];
+                                       t = currDayAppData[hash]["time_used"]["minutes"]; t=t-60;
+                                        currDayAppData[hash]["time_used"]["minutes"] = t;
                                     }
                                 }
                                 else{
-                                    currDayAppData[hash]["time"]["seconds"]= apps[j].time.seconds;
-                                    currDayAppData[hash]["time"]["minutes"]= apps[j].time.minutes;
-                                    currDayAppData[hash]["time"]["hours"]= apps[j].time.hours;
+                                    currDayAppData[hash]["time_used"]["seconds"]= apps[j].time.seconds;
+                                    currDayAppData[hash]["time_used"]["minutes"]= apps[j].time.minutes;
+                                    currDayAppData[hash]["time_used"]["hours"]= apps[j].time.hours;
                                 }
                             }
                             else
                             {
                                 currDayAppData[hash]={ {"name", apps[j].name}, {"directory", apps[j].dir}, {"pid",apps[j].pid},
-                                {"time",{
+                                {"time_used",{
                                     {"seconds",apps[j].time.seconds},
                                     {"minutes",apps[j].time.minutes},
                                     {"hours",apps[j].time.hours}
@@ -312,16 +325,19 @@ void WriteToAppArray(char Buffer[] =NULL,std::string name="",std::string dir="",
                             apps[j]=newApp;
                             apps[j].time.seconds++;
                             apps[j].isEmpty=false;
+                            apps[j].hash= "";
                            // *lastApp=apps[j];
                         }
                     }
-                    else if(apps[j].isEmpty==false){
+                    else if(apps[j].isEmpty==false)
+                    {
                         if(i+1>pid_len) // This checks if the length of the recieved app is reached. if at the end and still not placed,
                         {               // this block  swaps the app in current j index, which has larger pid with the new one, then j and i is incremented and placed at higher index, this way the apps can still be acessed quickly.
                             Application temp;
                             temp =apps[j];
                             apps[j]=newApp;
-
+                            apps[j].isEmpty=false;
+                            apps[j].hash="";
                             if(ti==NULL)
                             {
                             apps[j].time.seconds++; // UPDATE THE TIME OF NEW APP
@@ -348,6 +364,7 @@ void WriteToAppArray(char Buffer[] =NULL,std::string name="",std::string dir="",
                             name=temp.name;
                             dir=temp.dir;
                             pid_len= pid.length();
+                            apps[j].isEmpty=false;
                             ti=NULL;
                         }
                         pid_len= pid.length();
@@ -366,6 +383,7 @@ void WriteToAppArray(char Buffer[] =NULL,std::string name="",std::string dir="",
                         {
                             j=j*10 + (pid[i]-48);
                         }
+                         
                     }
                     else{
                         apps[j]=newApp;
@@ -414,6 +432,7 @@ void WriteToAppArray(bool t)
             std::string name,dir,pid;
             Time t;
             std::string hash=it.key();
+            std::cout<<"HASH::"<<hash<<std::endl;
             name = currDayAppData[hash]["name"];
             
             dir=currDayAppData[hash]["directory"];
@@ -431,6 +450,7 @@ void WriteToAppArray(bool t)
 void ResizeAppVector()
 {
     apps.resize(10);
+    std::cout<<"RESIZE APP VECTOR CALLED \n";
 }
 void ResizeAppVector(size_t s)
 {
@@ -439,7 +459,19 @@ void ResizeAppVector(size_t s)
 
 void WriteToFile()
 {
-     
+     unsigned short hour =CURR_DATE_TIME.wHour;
+	unsigned short minute =CURR_DATE_TIME.wMinute;
+	unsigned short day= CURR_DATE_TIME.wDay;
+	unsigned short month =CURR_DATE_TIME.wMonth;
+	unsigned short year =CURR_DATE_TIME.wYear;
+    
+    std::string filenamestr = "./data/" + std::to_string(day)+'-'+ std::to_string(month) +"-"+std::to_string(year)+ ".json";
+    const char* filename = filenamestr.c_str();
+
+  
+    std::ofstream fi(filename);
+    fi<<to_string(currDayAppData)<<std::endl;
+
 }
 
 void ReadFromFile()
@@ -479,6 +511,7 @@ void ReadFromFile()
 
 //currDayAppData[0]["pi"]=3.14;
 fclose(data);
+CURR_DATE_TIME=DATE_TIME;
 // data=fopen(filename,"w");
 // if (pFile!=NULL)
 //   {
@@ -493,6 +526,68 @@ void WriteToJSONobj(FILE* file)
 {
     currDayAppData = nlohmann::json::parse(file);
     WriteToAppArray(true);
+}
+
+void WriteToJSONobj()
+{
+    for(size_t i=0; i<apps.size();i++)
+    {
+        if(apps[i].isEmpty==false)
+        {
+            std::cout<<"CLOSING!";
+            if(apps[i].hash=="")
+            {
+                std::hash<std::string> appHash; 
+                std::string key= apps[i].name + apps[i].dir;                             
+                // std::size_t usingedintstring = std::hash<std::string>{}(key);
+                std::stringstream ss;
+                ss<<appHash(key);
+                apps[i].hash= ss.str();
+               
+            }
+            if(!currDayAppData.contains(apps[i].hash))
+            {
+            currDayAppData[apps[i].hash]["pid"]= apps[i].pid;
+            currDayAppData[apps[i].hash]["name"]= apps[i].name;
+            currDayAppData[apps[i].hash]["directory"]= apps[i].dir;
+            currDayAppData[apps[i].hash]["time_used"]["seconds"]= apps[i].time.seconds;
+            currDayAppData[apps[i].hash]["time_used"]["minutes"]= apps[i].time.minutes;
+            currDayAppData[apps[i].hash]["time_used"]["hours"]= apps[i].time.hours;
+            // std::cout<<apps[i].hash<<std::endl<< apps[i].pid<<std::endl;
+            }
+            else
+            {
+                currDayAppData[apps[i].hash]["pid"]= apps[i].pid;
+                currDayAppData[apps[i].hash]["name"]= apps[i].name;
+                currDayAppData[apps[i].hash]["directory"]= apps[i].dir;
+                Time t;
+                
+                t.seconds = currDayAppData[apps[i].hash]["time_used"]["seconds"];
+                t.seconds += apps[i].time.seconds;
+                t.minutes = currDayAppData[apps[i].hash]["time_used"]["minutes"];
+                t.minutes += apps[i].time.minutes;
+                t.hours = currDayAppData[apps[i].hash]["time_used"]["hours"];
+                t.hours += apps[i].time.hours;
+                if(t.seconds>=60)
+                {
+                    t.minutes++;
+                    t.seconds=t.seconds-60;
+                }
+                if(t.minutes>=60)
+                {
+                    t.hours++;
+                    t.minutes=t.minutes-60;
+                }
+                currDayAppData[apps[i].hash]["time_used"]["seconds"]= t.seconds;
+                currDayAppData[apps[i].hash]["time_used"]["minutes"]= t.minutes;
+                currDayAppData[apps[i].hash]["time_used"]["hours"]= t.hours;
+            }
+
+        }
+    }
+
+    std::cout<<"\n Write TO OBJECT completed!";
+
 }
 
 /*typedef struct _NOTIFYICONDATAA {
@@ -524,7 +619,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 int main()
 {
      
-
+ReadFromFile();
 
 // Get a handle to an input file for the parent. 
 // This example assumes a plain text file and uses string output to verify data flow. 
@@ -636,8 +731,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
     MSG msg = { };
    msg.hwnd = hwnd;  // THIS IS NOT REQUIRED, PROBABLY
 
-   ReadFromFile();
-
+   
+    auto a1 = std::async(std::launch::async,&X::PipeRead, &x);
 //std::cout<<j["pi"];
 	DWORD pid;
 	HWND info;// = GetForegroundWindow();
@@ -718,6 +813,8 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         return 0;
     case WM_DESTROY:
         std::cout<<"WM_DESTROY called .\n";
+        WriteToJSONobj();
+        WriteToFile();
         PostQuitMessage(0);
         return 0;
 

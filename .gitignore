@@ -30,3 +30,10 @@
 *.exe
 *.out
 *.app
+
+./data
+err.txt
+out.txt
+pw-window-watcher.cpp
+SHA256.cpp
+./thirdparty/SHA256.h
