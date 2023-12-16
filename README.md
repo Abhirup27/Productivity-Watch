@@ -12,5 +12,7 @@ This is a standalone software, it does not need any web browser or internet conn
 
 ## Donate
 If you like the software and would like to support me in making this and more helpful software, you should consider donating if you can. This money will be used to further develop this software as it would encourage me more. I also want to be an independent developer, and I am also looking forward to making games.
+
+
 You can donate to me using: 
 [<img width="100px" src="https://upload.wikimedia.org/wikipedia/commons/a/a4/Paypal_2014_logo.png?20150315064712">](https://paypal.me/abhirup27?country.x=IN&locale.x=en_GB)
