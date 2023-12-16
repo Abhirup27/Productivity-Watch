@@ -8,6 +8,7 @@
 //#define WINVER 0x0A00
 //#define _WIN32_WINNT 0x0A00
 #include<Windows.h>
+#include<windowsx.h>
 #include<winbase.h>
 #include<shellapi.h>
 #include<psapi.h> // For access to GetModuleFileNameEx
@@ -49,6 +50,10 @@ struct Time{
     unsigned short hours=0;
 };
 
+PROCESS_INFORMATION watcher_info = {};
+
+bool IsWatcherRunning();
+bool iswatcherRunning=false;
 void WriteToAppArray(bool);
 void WriteToAppArray(char [],std::string,std::string,std::string,Time*); // the named pipe writes to the struct array when pw-window-watcher sends data.
 void WriteToJSONobj(); //Called when the server wants to write to file or when the pw-gui requests the JSON obj for current day data
@@ -647,7 +652,7 @@ ReadFromFile();
    
     HINSTANCE window;
     //LPSTR cmdline= GetCommandLine();
-    wWinMain(window,NULL,GetCommandLineW(),SW_SHOW);
+    wWinMain(window,NULL,GetCommandLineW(),SW_HIDE);
  
     //WriteToPipe(); 
    //printf( "\n->Contents of %S written to child STDIN pipe.\n", str0);
@@ -703,6 +708,10 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
     }
 
     ShowWindow(hwnd, nCmdShow);
+    //HMENU hMenu = GetSystemMenu( hwnd, FALSE );
+    //EnableMenuItem( hMenu, SC_CLOSE, MF_BYCOMMAND | MF_DISABLED | MF_GRAYED );
+   // EnableMenuItem( hMenu, SC_CLOSE, MF_BYPOSITION);
+
         BOOL res; 
          LPSTR lpszTip=NULL;
     NOTIFYICONDATA tnid={}; 
@@ -757,10 +766,10 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
       // std::cout<<msg.message<<std::endl;
         if(msg.message==0x8111)
         {
-            POINT mousePos ={};
-            GetCursorPos(&mousePos);
-            msg.lParam=(LPARAM)&mousePos;
-           // std::cout<<mousePos.x<<std::endl;
+            //POINT mousePos ={};
+            //GetCursorPos(&mousePos);
+            //msg.lParam=(LPARAM)&mousePos;
+           //std::cout<<mousePos.x<<std::endl;
         }
         DispatchMessage(&msg);
     }
@@ -775,11 +784,11 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
    // std::cout<<uMsg<<std::endl;
-    if(uMsg==0x8111)
-    {
-        std::cout<<uMsg<<std::endl;
+    // if(uMsg==0x8111)
+    // {
+    //     std::cout<<uMsg<<std::endl;
      
-    }
+    // }
     
     if(uMsg==0x0024)
     {
@@ -790,16 +799,105 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     }
    switch (uMsg)
     {
+         case WM_SYSCOMMAND:
+        {if (wParam == SC_CLOSE)
+        {   
+            std::cout<<"SC_CLOSE \n";
+             ShowWindow(hwnd, SW_HIDE);
+
+        }
+        return 0;}
+        case WM_COMMAND:
+        {
+            //std::cout<<LOWORD(wParam)<<std::endl;
+            if(LOWORD(wParam)==0)
+            {
+                ShowWindow(hwnd, SW_SHOW);
+            }
+            else if(LOWORD(wParam)==1)
+            {
+                UINT exitcode=258;
+                TerminateProcess(watcher_info.hProcess,exitcode);
+                SendMessage(hwnd,WM_DESTROY,NULL,NULL);
+                  ExitProcess(1);
+            }
+            else if(LOWORD(wParam)==2)
+            {
+                 if(IsWatcherRunning())
+                {
+                    UINT exitcode=258;
+                    TerminateProcess(watcher_info.hProcess,exitcode);
+                }
+                else
+                {
+                    CreateChildProcess();
+                }
+            }
+            return 0;
+        }
       case DOTASK:
     {
+        
+        int xPos = GET_X_LPARAM(lParam); 
+            int yPos = GET_Y_LPARAM(lParam);
+            if(lParam==WM_RBUTTONDOWN)
+            {
+                int xPos = GET_X_LPARAM(lParam); 
+                int yPos = GET_Y_LPARAM(lParam);
+                POINT mousePos = {};
+                GetCursorPos(&mousePos);
+                //std::cout<<xPos<<" "<<yPos<<std::endl;
+                //ShowWindow(hwnd, SW_SHOW);
+                HMENU barmenu= CreatePopupMenu();
+                MENUITEMINFO me1= {};
+                me1.cbSize=sizeof(MENUITEMINFO);
+                me1.fMask= MIIM_TYPE |MIIM_ID |MIIM_STATE;
+                me1.fType= MFT_STRING;
+                me1.fState=MFS_ENABLED;
+                me1.wID=0;
+                me1.hSubMenu = NULL;
+                me1.dwTypeData= (LPSTR)"Open";
+                me1.cch=5;
+                MENUITEMINFO me2= {};
+                me2.cbSize=sizeof(MENUITEMINFO);
+                me2.fMask= MIIM_TYPE |MIIM_ID |MIIM_STATE;
+                me2.fType= MFT_STRING;
+                me2.fState=MFS_ENABLED;
+                me2.wID=1;
+                me2.hSubMenu = NULL;
+                me2.dwTypeData= (LPSTR)"Exit";
+                me2.cch=4;
+                 MENUITEMINFO me3= {};
+                me3.cbSize=sizeof(MENUITEMINFO);
+                me3.fMask= MIIM_TYPE |MIIM_ID |MIIM_STATE;
+                me3.fType= MFT_STRING;
+                me3.fState=MFS_ENABLED;
+                me3.wID=2;
+                me3.hSubMenu = NULL;
+                
+                if(IsWatcherRunning())
+                {
+                    me3.dwTypeData= (LPSTR)"Stop Window Watcher";
+                }
+                else
+                {
+                    me3.dwTypeData= (LPSTR)"Start Window Watcher";
+                }
+                me3.cch=lstrlenA(me3.dwTypeData);
+                InsertMenuItemA(barmenu,1,true,&me1);
+                InsertMenuItemA(barmenu,2,true,&me2);
+                InsertMenuItemA(barmenu,0,true,&me3);
+        TrackPopupMenu(barmenu,TPM_LEFTALIGN,mousePos.x,mousePos.y,0,hwnd,NULL);
+            }
         //std::cout<<LOWORD(lParam);
        // LPPOINT mousePos={};
-        POINT mousePos = {};
-         GetCursorPos(&mousePos);
-        std::cout<<mousePos.x<<std::endl;
-           HMENU barmenu= CreatePopupMenu();
-        TrackPopupMenu(barmenu,TPM_LEFTALIGN,mousePos.x,mousePos.y,0,hwnd,NULL);
-        DestroyMenu(barmenu);
+        // POINT mousePos = {};
+        //  GetCursorPos(&mousePos);
+        //std::cout<<mousePos.x<<std::endl;
+           //HMENU barmenu= CreatePopupMenu();
+
+        //TrackPopupMenu(barmenu,TPM_LEFTALIGN,mousePos.x,mousePos.y,0,hwnd,NULL);
+        //DestroyMenu(barmenu);
         //std::cout<<GetLastError();
         //HandlePopupMenu(hwnd,mousePos);
         //mousePos=(LPPOINT)lParam;
@@ -897,8 +995,8 @@ void CreateChildProcess()
    siStartInfo.dwFlags |= STARTF_USESTDHANDLES;
  
 // Create the child process. 
-    LPCSTR windwatcher = "C:/Users/Abhirup/Documents/Productivity-Watch/pw-window-watcher2.exe";
-   bSuccess = CreateProcess(windwatcher, // the exe to start
+    LPCSTR windwatcher = "./pw-window-watcher2.exe";
+   iswatcherRunning = CreateProcess(windwatcher, // the exe to start
       szCmdline,     // command line 
       NULL,          // process security attributes 
       NULL,          // primary thread security attributes 
@@ -907,10 +1005,10 @@ void CreateChildProcess()
       NULL,          // use parent's environment 
       NULL,          // use parent's current directory 
       &siStartInfo,  // STARTUPINFO pointer 
-      &piProcInfo);  // receives PROCESS_INFORMATION 
+      &watcher_info);  // receives PROCESS_INFORMATION 
    
    // If an error occurs, exit the application. 
-   if ( ! bSuccess ) 
+   if ( !iswatcherRunning ) 
       ErrorExit(TEXT("CreateProcess"));
    else 
    {
@@ -928,52 +1026,7 @@ void CreateChildProcess()
       CloseHandle(g_hChildStd_IN_Rd);
    }
 }
-/* 
-void WriteToPipe(void) 
 
-// Read from a file and write its contents to the pipe for the child's STDIN.
-// Stop when there is no more data. 
-{ 
-   DWORD dwRead, dwWritten; 
-   CHAR chBuf[BUFSIZE];
-   BOOL bSuccess = FALSE;
- 
-   for (;;) 
-   { 
-      bSuccess = ReadFile(g_hInputFile, chBuf, BUFSIZE, &dwRead, NULL);
-      if ( ! bSuccess || dwRead == 0 ) break; 
-      
-      bSuccess = WriteFile(g_hChildStd_IN_Wr, chBuf, dwRead, &dwWritten, NULL);
-      if ( ! bSuccess ) break; 
-   } 
- 
-// Close the pipe handle so the child process stops reading. 
- 
-   if ( ! CloseHandle(g_hChildStd_IN_Wr) ) 
-      ErrorExit(TEXT("StdInWr CloseHandle")); 
-} 
- 
-void ReadFromPipe(void) 
-
-// Read output from the child process's pipe for STDOUT
-// and write to the parent process's pipe for STDOUT. 
-// Stop when there is no more data. 
-{ 
-   DWORD dwRead, dwWritten; 
-   CHAR chBuf[BUFSIZE]; 
-   BOOL bSuccess = FALSE;
-   HANDLE hParentStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
-    std::cout<<GetStdHandle(STD_OUTPUT_HANDLE);
-   for (;;) 
-   { 
-      bSuccess = ReadFile( g_hChildStd_OUT_Rd, chBuf, BUFSIZE, &dwRead, NULL);
-      if( ! bSuccess || dwRead == 0 ) break; 
-
-      bSuccess = WriteFile(hParentStdOut, chBuf,dwRead, &dwWritten, NULL);
-      if (! bSuccess ) break; 
-   } 
-} 
- */
 void ErrorExit(PTSTR lpszFunction) 
 
 // Format a readable error message, display a message box, 
@@ -1004,4 +1057,16 @@ void ErrorExit(PTSTR lpszFunction)
     LocalFree(lpMsgBuf);
     LocalFree(lpDisplayBuf);
     ExitProcess(1);
+}
+
+bool IsWatcherRunning()
+{
+    DWORD exitcode;
+    GetExitCodeProcess(watcher_info.hProcess,&exitcode);
+    std::cout<<STILL_ACTIVE<<std::endl;
+    if(exitcode==STILL_ACTIVE)
+    {
+        return true;
+    }
+    return false;
 }
