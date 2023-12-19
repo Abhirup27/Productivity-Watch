@@ -50,17 +50,19 @@ struct Time{
     unsigned short hours=0;
 };
 
-PROCESS_INFORMATION watcher_info = {};
-
+PROCESS_INFORMATION watcher_info ;
+PROCESS_INFORMATION gui_info ;
 bool IsWatcherRunning();
 bool iswatcherRunning=false;
 void WriteToAppArray(bool);
-void WriteToAppArray(char [],std::string,std::string,std::string,Time*); // the named pipe writes to the struct array when pw-window-watcher sends data.
+void WriteToAppArray(char [],std::string,std::string,std::string,std::string,Time*); // the named pipe writes to the struct array when pw-window-watcher sends data.
 void WriteToJSONobj(); //Called when the server wants to write to file or when the pw-gui requests the JSON obj for current day data
 void WriteToJSONobj(FILE*); // when ReadFromFile is called on startup. this func then calls WriteToAppArray()
 void WriteToFile(); // Called when the system clock is 00:00 or the pw-server is closed.
 void ReadFromFile();
 
+bool FindProcess( DWORD ,std::string);
+bool closeProcessbyPID(DWORD, DWORD, LPHANDLE);
 
 void ResizeAppVector();
 void ResizeAppVector(size_t);
@@ -84,14 +86,56 @@ struct X
 {
 
     HANDLE hPipe;
-    char buffer2[1024];
+    char buffer2[MAX_PATH*32];
     DWORD dwRead;
 void PipeRead()
 {
       // Create the child process. The pw-window-watcher must be started by the concurrent thread, not in the main or winmain function (main thread)
-   
-   CreateChildProcess();
-    std::lock_guard<std::mutex> lk(m);
+   std::lock_guard<std::mutex> lk(m);
+ 
+   // std::cout<<found;
+    //CreateChildProcess();
+     DWORD aProcesses[1024], cbNeeded, cProcesses;
+   // unsigned int i;
+     bool found=false;
+//   if(found==false)
+//   {
+//     std::cout<<"PROCESS IS TO BE CREATED!!! \n \n \n \n";
+//     //CreateChildProcess();
+//       TCHAR szCmdline[]=TEXT("child");
+//                 PROCESS_INFORMATION piProcInfo; 
+
+//                  STARTUPINFO siStartInfo;
+//                 BOOL bSuccess = FALSE; 
+ 
+//                 // Set up members of the PROCESS_INFORMATION structure. 
+                
+//                 ZeroMemory( &watcher_info, sizeof(PROCESS_INFORMATION) );
+                
+//                 // Set up members of the STARTUPINFO structure. 
+//                 // This structure specifies the STDIN and STDOUT handles for redirection.
+                
+//                 ZeroMemory( &siStartInfo, sizeof(STARTUPINFO) );
+//                 siStartInfo.cb = sizeof(STARTUPINFO); 
+//                 siStartInfo.hStdError = g_hChildStd_OUT_Wr;
+//                 siStartInfo.hStdOutput = g_hChildStd_OUT_Wr;
+//                 siStartInfo.hStdInput = g_hChildStd_IN_Rd;
+//                 siStartInfo.dwFlags |= STARTF_USESTDHANDLES;
+                
+//                 // Create the child process. 
+//                     LPCSTR gui = "./pw-window-watcher2.exe";
+//                 CreateProcess(gui, // the exe to start
+//                     szCmdline,     // command line 
+//                     NULL,          // process security attributes 
+//                     NULL,          // primary thread security attributes 
+//                     TRUE,          // handles are inherited 
+//                     0,             // creation flags 
+//                     NULL,          // use parent's environment 
+//                     NULL,          // use parent's current directory 
+//                     &siStartInfo,  // STARTUPINFO pointer 
+//                     &watcher_info);  // receives PROCESS_INFORMATION
+//   } 
+  
     hPipe = CreateNamedPipe(TEXT("\\\\.\\pipe\\Pipe"),
                                 PIPE_ACCESS_DUPLEX,
                                 PIPE_TYPE_BYTE | PIPE_READMODE_BYTE | PIPE_WAIT,   // FILE_FLAG_FIRST_PIPE_INSTANCE is not needed but forces CreateNamedPipe(..) to fail if the pipe already exists...
@@ -100,24 +144,53 @@ void PipeRead()
                                 1024 * 32,
                                 NMPWAIT_USE_DEFAULT_WAIT,
                                 NULL);
-        while (hPipe != INVALID_HANDLE_VALUE)
-        {
-            if (ConnectNamedPipe(hPipe, NULL) != FALSE)   // wait for someone to connect to the pipe
-            {
+                    while (hPipe != INVALID_HANDLE_VALUE)
+                    {
+                        if (ConnectNamedPipe(hPipe, NULL) != FALSE)   // wait for someone to connect to the pipe
+                        {
+                            std::cout<<"RUNNING"<<std::endl<<iswatcherRunning<<std::endl;
+                            if(iswatcherRunning==false)
+                            {
+                                //std::cout<<"INSIDE IF"<<std::endl<<iswatcherRunning<<std::endl;
+                                if ( !EnumProcesses( aProcesses, sizeof(aProcesses), &cbNeeded ) )
+                                    {
+                                        std::cout<<"INSIDE 2nd IF"<<std::endl<<iswatcherRunning<<std::endl;
+                                        return ;
+                                    }
+
+
+                // Calculate how many process identifiers were returned.
+
+                cProcesses = cbNeeded / sizeof(DWORD);
+
+                //std::cout<<"CProcesses"<<std::endl<<cProcesses<<std::endl;
+
+                found=false;
+                for (unsigned int i = 0; i < cProcesses; i++ )
+                {
+                    if( aProcesses[i] != 0 )
+                    {
+                    found= FindProcess( aProcesses[i] ,"pw-window-watcher2.exe"); //don't forget .exe
+                    }
+                    if(found==true)
+                    {iswatcherRunning=true;
+                        break;}
+                }
+                            }
                 while (ReadFile(hPipe, buffer2, sizeof(buffer2) - 1, &dwRead, NULL) != FALSE)
                 {
                     /* add terminating zero */
                     buffer2[dwRead] = '\0';
 
                     /* do something with data in buffer */
-                   // printf("%s", buffer2);
-                   WriteToAppArray(buffer2, "","","",NULL);
+                    printf("%s \n", buffer2);
+                   WriteToAppArray(buffer2, "","","","",NULL);
                     if(dwRead==1024)
                     {
                         dwRead=0;
                     }
                 }
-             //   std::cout<<GetLastError()<<std::endl;
+           //   std::cout<<GetLastError()<<std::endl;
             }
 
             DisconnectNamedPipe(hPipe);
@@ -130,8 +203,9 @@ X x;
 
 
 
-void WriteToAppArray(char Buffer[] =NULL,std::string name="",std::string dir="",std::string pid="",Time* ti=NULL)
+void WriteToAppArray(char Buffer[] =NULL,std::string name="",std::string dir="",std::string pid="",std::string hash="",Time* ti=NULL)
 {
+   
     
    // fetch name and other details from buffer
   // DWORD pid;
@@ -145,6 +219,7 @@ void WriteToAppArray(char Buffer[] =NULL,std::string name="",std::string dir="",
          || ( Buffer[index]!=' ' || (Buffer[index+1]!='F' && Buffer[index+2]!=':'))
         )  
         {
+           //std::cout<<Buffer[index];
             if(Buffer[index]>=0 &&Buffer[index]<128)
             {
             name.push_back(Buffer[index]);
@@ -162,7 +237,7 @@ void WriteToAppArray(char Buffer[] =NULL,std::string name="",std::string dir="",
         index++;
     //FOR PID
     int digits=1;
-    
+    //std::cout<<name <<dir<<std::endl;
      while(Buffer[index]!='\0')
     {
       //   std::cout<<"execute";
@@ -171,7 +246,7 @@ void WriteToAppArray(char Buffer[] =NULL,std::string name="",std::string dir="",
         pid.push_back(Buffer[index]);
         index++;
     }
-    }std::cout<<name<<dir<<pid<<std::endl;
+    }//std::cout<<name<<dir<<pid<<std::endl;
    
    size_t sizeApps= apps.size();
     size_t pid_len= pid.length();
@@ -181,7 +256,11 @@ void WriteToAppArray(char Buffer[] =NULL,std::string name="",std::string dir="",
        
         //then find the app using a hash in the array, if not found, create new
         Application newApp;
-        newApp.name=name; newApp.dir=dir; newApp.pid=stoi(pid);
+        newApp.name=name; newApp.dir=dir; newApp.pid=stoi(pid); 
+        if(hash !="")
+        {
+            newApp.hash=hash;
+        }
         if(apps.empty()==true)
         {
             //std::cout<<"running";
@@ -207,6 +286,10 @@ void WriteToAppArray(char Buffer[] =NULL,std::string name="",std::string dir="",
             apps[int(pid[0])- 48].time.hours=ti->hours;
              apps[int(pid[0])- 48].isEmpty=false;
              
+           }
+           if(hash!="")
+           {
+            apps[int(pid[0])- 48].hash=hash;
            }
            // *lastApp = apps[pid[0]];
             std::cout<<"it is at "<<pid[0] <<" index running for seconds: "<<apps[int(pid[0])- 48].time.seconds<<std::endl;
@@ -251,7 +334,8 @@ void WriteToAppArray(char Buffer[] =NULL,std::string name="",std::string dir="",
                         else // if the pid matches but the name and dir are different, that means the previous app with the pid was closed
                         {   // need to save that app object with the key value being a hash of window name + directory of exe.
                             
-                            std::string hash;
+                            std::string n_hash;
+                            //n_hash =hash;
                             if(apps[j].hash == "") //generate hash
                             {
                                // genHash(apps[j].name, apps[j].dir);
@@ -263,74 +347,112 @@ void WriteToAppArray(char Buffer[] =NULL,std::string name="",std::string dir="",
                                //std::array<uint8_t, 32> digest = genhash.digest();
                                 std::stringstream ss;
                                  ss<<appHash(key);
-                                 hash=ss.str();
+                                 n_hash=ss.str();
                                 apps[j].hash= ss.str();
                                 
                                 //hash= genhash(key);
                             }
+                            else
+                            {
+                                n_hash=apps[j].hash;
+                            }
                             unsigned int t; 
-                            if(currDayAppData.contains(hash))
+                            if(currDayAppData.contains(n_hash))
                             { 
-                                std::cout<<currDayAppData[hash]<<std::endl;
-                                if(currDayAppData[hash]["pid"] !=apps[j].pid) //means the app has restarted since it was saved on the json
+                                std::cout<<name<<dir<<pid<<std::endl;//ti->seconds<<std::endl;
+                                std::cout<<currDayAppData[n_hash]<<std::endl;
+                                if(currDayAppData[n_hash]["pid"] !=apps[j].pid) //means the app has restarted since it was saved on the json
                                 {
-                                    t=currDayAppData[hash]["time_used"]["seconds"];
+                                    t=currDayAppData[n_hash]["time_used"]["seconds"];
                                     t= t+ apps[j].time.seconds;
-                                    currDayAppData[hash]["time_used"]["seconds"] = t;
-                                    if( currDayAppData[hash]["time_used"]["seconds"]>=60)
+                                    currDayAppData[n_hash]["time_used"]["seconds"] = t;
+                                    if( currDayAppData[n_hash]["time_used"]["seconds"]>=60)
                                     {
                                         t=t-60;
 
-                                        currDayAppData[hash]["time_used"]["seconds"] = t;
-                                        t = currDayAppData[hash]["time_used"]["minutes"];
+                                        currDayAppData[n_hash]["time_used"]["seconds"] = t;
+                                        t = currDayAppData[n_hash]["time_used"]["minutes"];
                                         t=t+1;
-                                        currDayAppData[hash]["time_used"]["minutes"]=t;
+                                        currDayAppData[n_hash]["time_used"]["minutes"]=t;
                                     }
-                                    if(currDayAppData[hash]["time_used"]["minutes"] >=60)
+                                    if(currDayAppData[n_hash]["time_used"]["minutes"] >=60)
                                     {
-                                        currDayAppData[hash]["time_used"]["minutes"]=0;
+                                        currDayAppData[n_hash]["time_used"]["minutes"]=0;
 
-                                        t = currDayAppData[hash]["time_used"]["hours"];
+                                        t = currDayAppData[n_hash]["time_used"]["hours"];
                                         t=t+1;
-                                        currDayAppData[hash]["time_used"]["hours"]=t;
+                                        currDayAppData[n_hash]["time_used"]["hours"]=t;
                                     }
-                                    t = currDayAppData[hash]["time_used"]["minutes"];
+                                    t = currDayAppData[n_hash]["time_used"]["minutes"];
                                     t = t + apps[j].time.minutes;
                                     
-                                    currDayAppData[hash]["time_used"]["minutes"] = t;
+                                    currDayAppData[n_hash]["time_used"]["minutes"] = t;
 
-                                    if(currDayAppData[hash]["time_used"]["minutes"]>=60)
+                                    if(currDayAppData[n_hash]["time_used"]["minutes"]>=60)
                                     {
-                                      t=  currDayAppData[hash]["time_used"]["hours"];
+                                      t=  currDayAppData[n_hash]["time_used"]["hours"];
                                       t = t +1;
-                                      currDayAppData[hash]["time_used"]["hours"] = t;
-                                       t = currDayAppData[hash]["time_used"]["minutes"];
-                                       t = currDayAppData[hash]["time_used"]["minutes"]; t=t-60;
-                                        currDayAppData[hash]["time_used"]["minutes"] = t;
+                                      currDayAppData[n_hash]["time_used"]["hours"] = t;
+                                       t = currDayAppData[n_hash]["time_used"]["minutes"];
+                                       t = currDayAppData[n_hash]["time_used"]["minutes"]; t=t-60;
+                                        currDayAppData[n_hash]["time_used"]["minutes"] = t;
                                     }
                                 }
                                 else{
-                                    currDayAppData[hash]["time_used"]["seconds"]= apps[j].time.seconds;
-                                    currDayAppData[hash]["time_used"]["minutes"]= apps[j].time.minutes;
-                                    currDayAppData[hash]["time_used"]["hours"]= apps[j].time.hours;
+                                    std::cout<<std::endl<<"THIS RAN"<<std::endl;
+                                    currDayAppData[n_hash]["time_used"]["seconds"]= apps[j].time.seconds;
+                                    currDayAppData[n_hash]["time_used"]["minutes"]= apps[j].time.minutes;
+                                    currDayAppData[n_hash]["time_used"]["hours"]= apps[j].time.hours;
+                                    std::cout<<std::endl<<"THIS RAN 2"<<std::endl;
                                 }
                             }
                             else
                             {
-                                currDayAppData[hash]={ {"name", apps[j].name}, {"directory", apps[j].dir}, {"pid",apps[j].pid},
+                                std::cout<<std::endl<<"THIS RAN 2"<<std::endl<<n_hash;
+                                currDayAppData[n_hash]={ {"name", apps[j].name}, {"directory", apps[j].dir}, {"pid",apps[j].pid},
                                 {"time_used",{
                                     {"seconds",apps[j].time.seconds},
                                     {"minutes",apps[j].time.minutes},
                                     {"hours",apps[j].time.hours}
                                     }}};
+                                std::cout<<std::endl<<currDayAppData[n_hash];
                             }
                             
                             // currDayAppData[apps[j].hash]=apps[j];
                            // currDayAppData[apps[j].hash]= {{"name",apps[j].name},{"directory",apps[j].dir},{"pid",apps[j].pid},{"time",{{"seconds",apps[j].time.seconds},{"minutes",apps[j].time.minutes},{"hours",apps[j].time.hours}}}};
+                            std::cout<<std::endl<<"THIS RAN 3"<<std::endl;
                             apps[j]=newApp;
+                            std::cout<<std::endl<<"THIS RAN 4"<<std::endl;
+
+                            if(hash=="")
+                            {
+                                std::hash<std::string> appHash;
+                               std::string key= apps[j].name + apps[j].dir;
+                                std::stringstream ss;
+                                 ss<<appHash(key);
+                                 n_hash=ss.str();
+                                apps[j].hash= ss.str();
+                            }
+                            if(currDayAppData.contains(apps[j].hash) && ti==NULL)
+                            {
+                                std::cout<<std::endl<<"THIS RAN 5.1"<<std::endl;
+                                apps[j].time.seconds = currDayAppData[apps[j].hash]["time_used"]["seconds"]; // apps[j].time.seconds= ti->seconds;
+                                std::cout<<std::endl<<"THIS RAN 5.2"<<std::endl;
+                                apps[j].time.minutes = currDayAppData[apps[j].hash]["time_used"]["minutes"];
+                                apps[j].time.hours = currDayAppData[apps[j].hash]["time_used"]["hours"];
+                                std::cout<<std::endl<<"THIS RAN 5.3"<<std::endl;
+                            }
+                            else if(ti!=NULL)
+                            {
+                                std::cout<<std::endl<<"THIS RAN 5"<<std::endl;
+                                apps[j].time.seconds= ti->seconds;
+                                apps[j].time.minutes= ti->minutes;
+                                apps[j].time.hours= ti->hours;
+                            }
                             apps[j].time.seconds++;
                             apps[j].isEmpty=false;
-                            apps[j].hash= "";
+                            std::cout<<std::endl<<"THIS RAN 6"<<std::endl;
+                           // apps[j].hash= "";
                            // *lastApp=apps[j];
                         }
                     }
@@ -342,7 +464,8 @@ void WriteToAppArray(char Buffer[] =NULL,std::string name="",std::string dir="",
                             temp =apps[j];
                             apps[j]=newApp;
                             apps[j].isEmpty=false;
-                            apps[j].hash="";
+                            apps[j].time.seconds=0; apps[j].time.minutes=0; apps[j].time.hours=0;
+                           // apps[j].hash="";
                             if(ti==NULL)
                             {
                             apps[j].time.seconds++; // UPDATE THE TIME OF NEW APP
@@ -427,7 +550,7 @@ void WriteToAppArray(char Buffer[] =NULL,std::string name="",std::string dir="",
 }
 void WriteToAppArray(bool t)
 {
-    std::cout<<"called Write TO APp"<<std::endl;
+    
     if(currDayAppData.empty()== false)
     {
 
@@ -445,7 +568,7 @@ void WriteToAppArray(bool t)
             t.seconds=currDayAppData[hash]["time_used"]["seconds"];
             t.minutes=currDayAppData[hash]["time_used"]["minutes"];
             t.hours=currDayAppData[hash]["time_used"]["hours"];
-            WriteToAppArray(NULL,name,dir,pid,&t);
+            WriteToAppArray(NULL,name,dir,pid,hash,&t);
             std::cout<<"\n "<<name<<dir<<pid<<"written ! \n";
         }
         
@@ -455,7 +578,7 @@ void WriteToAppArray(bool t)
 void ResizeAppVector()
 {
     apps.resize(10);
-    std::cout<<"RESIZE APP VECTOR CALLED \n";
+    
 }
 void ResizeAppVector(size_t s)
 {
@@ -517,6 +640,7 @@ void ReadFromFile()
 //currDayAppData[0]["pi"]=3.14;
 fclose(data);
 CURR_DATE_TIME=DATE_TIME;
+std::cout<<"read from file \n";
 // data=fopen(filename,"w");
 // if (pFile!=NULL)
 //   {
@@ -539,7 +663,7 @@ void WriteToJSONobj()
     {
         if(apps[i].isEmpty==false)
         {
-            std::cout<<"CLOSING!";
+            
             if(apps[i].hash=="")
             {
                 std::hash<std::string> appHash; 
@@ -626,9 +750,11 @@ int main()
      
 ReadFromFile();
 
+    auto a1 = std::async(std::launch::async,&X::PipeRead, &x);
+
+   
 // Get a handle to an input file for the parent. 
 // This example assumes a plain text file and uses string output to verify data flow. 
- std::cout<<"after create process";
 //   char str0[]= "comm.txt";
 //   LPCSTR filen= "C:/Users/Abhirup/Documents/ActivityTracker/comm.txt";
 
@@ -666,6 +792,7 @@ ReadFromFile();
 }
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow)
 {
+ 
     //BOOL MyTaskBarAddIcon(HWND, UINT, HICON, LPSTR); 
    // FILE* fp;
     //fp=fopen("example.ico","rb");
@@ -684,6 +811,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
     wc.hIcon=ico;
 
     RegisterClass(&wc);
+
 
     // Create the window.
 
@@ -741,7 +869,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
    msg.hwnd = hwnd;  // THIS IS NOT REQUIRED, PROBABLY
 
    
-    auto a1 = std::async(std::launch::async,&X::PipeRead, &x);
+    
 //std::cout<<j["pi"];
 	DWORD pid;
 	HWND info;// = GetForegroundWindow();
@@ -812,12 +940,46 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             //std::cout<<LOWORD(wParam)<<std::endl;
             if(LOWORD(wParam)==0)
             {
-                ShowWindow(hwnd, SW_SHOW);
+
+                //ShowWindow(hwnd, SW_SHOW);
+                TCHAR szCmdline[]=TEXT("child");
+                PROCESS_INFORMATION piProcInfo; 
+
+                 STARTUPINFO siStartInfo;
+                BOOL bSuccess = FALSE; 
+ 
+                // Set up members of the PROCESS_INFORMATION structure. 
+                
+                ZeroMemory( &piProcInfo, sizeof(PROCESS_INFORMATION) );
+                
+                // Set up members of the STARTUPINFO structure. 
+                // This structure specifies the STDIN and STDOUT handles for redirection.
+                
+                ZeroMemory( &siStartInfo, sizeof(STARTUPINFO) );
+                siStartInfo.cb = sizeof(STARTUPINFO); 
+                siStartInfo.hStdError = g_hChildStd_OUT_Wr;
+                siStartInfo.hStdOutput = g_hChildStd_OUT_Wr;
+                siStartInfo.hStdInput = g_hChildStd_IN_Rd;
+                siStartInfo.dwFlags |= STARTF_USESTDHANDLES;
+                
+                // Create the child process. 
+                    LPCSTR gui = "./pw-gui.exe";
+                CreateProcess(gui, // the exe to start
+                    szCmdline,     // command line 
+                    NULL,          // process security attributes 
+                    NULL,          // primary thread security attributes 
+                    TRUE,          // handles are inherited 
+                    0,             // creation flags 
+                    NULL,          // use parent's environment 
+                    NULL,          // use parent's current directory 
+                    &siStartInfo,  // STARTUPINFO pointer 
+                    &gui_info);  // receives PROCESS_INFORMATION
             }
             else if(LOWORD(wParam)==1)
             {
                 UINT exitcode=258;
-                TerminateProcess(watcher_info.hProcess,exitcode);
+               // TerminateProcess(watcher_info.hProcess,exitcode);
+                 closeProcessbyPID(watcher_info.dwProcessId,exitcode,&watcher_info.hProcess);
                 SendMessage(hwnd,WM_DESTROY,NULL,NULL);
                   ExitProcess(1);
             }
@@ -826,12 +988,18 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
                  if(IsWatcherRunning())
                 {
                     UINT exitcode=258;
-                    TerminateProcess(watcher_info.hProcess,exitcode);
+                    //TerminateProcess(watcher_info.hProcess,exitcode);
+                    closeProcessbyPID(watcher_info.dwProcessId,exitcode,&watcher_info.hProcess);
                 }
                 else
                 {
+                    std::cout<<" THIS IS A REALLY BIG TEXT TO CHECK IF THIS LOOP RAN OR NOT! \n THIS IS A REALLY BIG TEXT TO CHECK IF THIS LOOP RAN OR NOT! \n" ;
                     CreateChildProcess();
                 }
+            }
+            else if(LOWORD(wParam)==3)
+            {
+
             }
             return 0;
         }
@@ -884,6 +1052,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
                     me3.dwTypeData= (LPSTR)"Start Window Watcher";
                 }
                 me3.cch=lstrlenA(me3.dwTypeData);
+                
                 InsertMenuItemA(barmenu,1,true,&me1);
                 InsertMenuItemA(barmenu,2,true,&me2);
                 InsertMenuItemA(barmenu,0,true,&me3);
@@ -975,14 +1144,14 @@ bool file_exists (char *filename) {
 void CreateChildProcess()
 // Create a child process that uses the previously created pipes for STDIN and STDOUT.
 { 
-   TCHAR szCmdline[]=TEXT("child");
+  TCHAR szCmdline[]=TEXT("child");
    PROCESS_INFORMATION piProcInfo; 
    STARTUPINFO siStartInfo;
    BOOL bSuccess = FALSE; 
  
 // Set up members of the PROCESS_INFORMATION structure. 
  
-   ZeroMemory( &piProcInfo, sizeof(PROCESS_INFORMATION) );
+   ZeroMemory( &watcher_info, sizeof(PROCESS_INFORMATION) );
  
 // Set up members of the STARTUPINFO structure. 
 // This structure specifies the STDIN and STDOUT handles for redirection.
@@ -996,8 +1165,8 @@ void CreateChildProcess()
  
 // Create the child process. 
     LPCSTR windwatcher = "./pw-window-watcher2.exe";
-   iswatcherRunning = CreateProcess(windwatcher, // the exe to start
-      szCmdline,     // command line 
+   bSuccess = CreateProcess(windwatcher, // the exe to start
+      NULL,     // command line 
       NULL,          // process security attributes 
       NULL,          // primary thread security attributes 
       TRUE,          // handles are inherited 
@@ -1006,9 +1175,10 @@ void CreateChildProcess()
       NULL,          // use parent's current directory 
       &siStartInfo,  // STARTUPINFO pointer 
       &watcher_info);  // receives PROCESS_INFORMATION 
-   
+      std::cout<<GetLastError()<<std::endl;
+   std::cout<<"CREATED\n";
    // If an error occurs, exit the application. 
-   if ( !iswatcherRunning ) 
+   if ( ! bSuccess ) 
       ErrorExit(TEXT("CreateProcess"));
    else 
    {
@@ -1016,8 +1186,8 @@ void CreateChildProcess()
       // Some applications might keep these handles to monitor the status
       // of the child process, for example. 
 
-      CloseHandle(piProcInfo.hProcess);
-      CloseHandle(piProcInfo.hThread);
+     //CloseHandle(watcher_info.hProcess);
+      //CloseHandle(watcher_info.hThread);
       
       // Close handles to the stdin and stdout pipes no longer needed by the child process.
       // If they are not explicitly closed, there is no way to recognize that the child process has ended.
@@ -1063,10 +1233,96 @@ bool IsWatcherRunning()
 {
     DWORD exitcode;
     GetExitCodeProcess(watcher_info.hProcess,&exitcode);
+   // std::cout<<STILL_ACTIVE<<std::endl;
+    // if(exitcode==STILL_ACTIVE)
+    // {
+    //     std::cout<<"STIL RUNNING \n \n";
+    //     return true;
+    // }
+    // std::cout<<"NOT RUNNING \n \n";
+    if(GetExitCodeProcess(watcher_info.hProcess,&exitcode)!=0)
+    {
+        std::cout<<"STIL RUNNING \n \n";
+        return true;
+    }
+    iswatcherRunning=false;
+    
+    std::cout<<"NOT RUNNING \n \n";//<<iswatcherRunning<<std::endl;
+    return false;
+}
+
+bool IsRunning(HANDLE hProcess)
+{
+    DWORD exitcode;
+    GetExitCodeProcess(hProcess,&exitcode);
     std::cout<<STILL_ACTIVE<<std::endl;
     if(exitcode==STILL_ACTIVE)
     {
         return true;
     }
     return false;
+}
+
+bool FindProcess( DWORD processID , std::string needed)
+{
+    TCHAR szProcessName[MAX_PATH] = TEXT("<unknown>");
+
+    // Get a handle to the process.
+
+    HANDLE hProcess = OpenProcess( PROCESS_QUERY_INFORMATION |
+                                   PROCESS_VM_READ,
+                                   FALSE, processID );
+
+    // Get the process name.
+
+    if (NULL != hProcess )
+    {
+        HMODULE hMod;
+        DWORD cbNeeded;
+
+        if ( EnumProcessModules( hProcess, &hMod, sizeof(hMod), 
+             &cbNeeded) )
+        {
+            GetModuleBaseName( hProcess, hMod, szProcessName, 
+                               sizeof(szProcessName)/sizeof(TCHAR) );
+        }
+    }
+	std::string name=szProcessName;
+    
+	if(name==needed)
+	{
+        //CloseHandle( hProcess );
+       // UINT exitcode=258;
+               // TerminateProcess(hProcess,exitcode);
+        watcher_info.hProcess=hProcess; // TO TERMINATE USING hProcess, OPENPROCCESS FUNCTION ABOVE NEEDS MORE PRIVILEDGES
+        watcher_info.dwProcessId=processID;
+       // CloseHandle( hProcess );
+		return true;
+	}
+	else
+	{
+        CloseHandle( hProcess );
+        return false;
+	}
+    // Print the process name and identifier.
+
+    //_tprintf( TEXT("%s  (PID: %u)\n"), szProcessName, processID );
+    return false;
+}
+
+bool closeProcessbyPID(DWORD p_id, DWORD exitcode, LPHANDLE o_hProcess=NULL)
+{
+    DWORD ecode;
+    HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION |PROCESS_TERMINATE, false, p_id);
+    TerminateProcess(hProcess, exitcode);
+    CloseHandle(*o_hProcess);
+    //*o_hProcess=hProcess;
+   iswatcherRunning=false;
+    if(GetExitCodeProcess(o_hProcess,&ecode)!=0)
+    {
+         CloseHandle(hProcess);
+        return false;
+    }
+     CloseHandle(hProcess);
+    return true;
 }

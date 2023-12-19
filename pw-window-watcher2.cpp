@@ -151,8 +151,8 @@ while(TRUE)
 	if (Handle)
 	{
         
-		TCHAR Buffer[1024];
-		DWORD buffSize = 1024;
+		TCHAR Buffer[MAX_PATH];
+		DWORD buffSize = MAX_PATH;
 		//CHAR buffer[1024];
 		//if (GetModuleFileNameEx(Handle, 0, Buffer, MAX_PATH)) // Slower method
 		if(QueryFullProcessImageNameA(Handle, 0, Buffer, &buffSize))  //Faster method
