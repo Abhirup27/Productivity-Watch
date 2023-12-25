@@ -10,6 +10,11 @@ This is a standalone software, it does not need any web browser or internet conn
 - implot
 - nlohmann json
 
+## Screenshots
+Do note that this software is still WIP
+<img alt="GUI" src="https://i.imgur.com/OKQHPQ6.png">
+<img alt="GUI" src="https://imgur.com/undefined">
+
 ## Donate
 If you like the software and would like to support me in making this and more helpful software, you should consider donating if you can. This money will be used to further develop this software as it would encourage me more. I also want to be an independent developer, and I am also looking forward to making games.
 
