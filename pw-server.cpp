@@ -1,18 +1,29 @@
+#undef UNICODE
+#define DEFAULT_PORT "27015"
+#define DEFAULT_BUFLEN 8192
+#pragma comment (lib, "Ws2_32.lib")
 #include<iostream>
 #include <fstream>
 #include <string>
+#include <cstring>
 #include <nlohmann/json.hpp>
+
 #define NOMINMAX
 #define WIN32_LEAN_AND_MEAN
 
 //#define WINVER 0x0A00
 //#define _WIN32_WINNT 0x0A00
 #include<Windows.h>
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#include <iphlpapi.h>
+#include <stdio.h>
 #include<windowsx.h>
 #include<winbase.h>
 #include<shellapi.h>
 #include<psapi.h> // For access to GetModuleFileNameEx
 #include<tchar.h>
+
 #include <crtdbg.h>
 #include<direct.h>
 #include <sys/stat.h>   // stat
@@ -22,7 +33,10 @@
 #include<future> // for async
 #include <functional>
  #include<sstream>
+ 
+#include<filesystem>
 std::mutex m; // FOR ASYNC with pipe function
+std::mutex n; // FOR WEB SOCKET SERVER WITH GUI
 #define DOTASK 0x8111
 
 #ifndef UNICODE
@@ -38,6 +52,7 @@ HANDLE g_hChildStd_OUT_Wr = NULL;
 
 HANDLE g_hInputFile = NULL;
  
+ bool init();
 void CreateChildProcess(void); 
 //void WriteToPipe(void); 
 //void ReadFromPipe(void); 
@@ -82,6 +97,270 @@ void genHash(std::string, std::string);
    std::vector<Application> apps;
    nlohmann::json currDayAppData;// =nlohmann::json::array();;
    SYSTEMTIME CURR_DATE_TIME;
+
+
+struct Web_Socket
+{
+   std::vector<std::string> GetfileList()
+{
+    std::vector<std::string> list;
+    std::string path("./data/");
+    std::string ext(".json");
+    for (auto &p : std::filesystem::recursive_directory_iterator(path))
+    {
+        //std::cout<<p.path().stem().string()<<std::endl;
+        if (p.path().extension() == ext)
+            list.push_back( p.path().stem().string());
+    }
+    return list;
+}
+
+FILE* open_file(char* filename)
+{
+    FILE *fp = fopen(filename, "r");
+    if (fp != NULL) {
+        return fp;
+    }
+    else{
+        //ERROR
+    }
+
+    return fp;
+}
+long get_json_size(FILE *fp)
+{
+    long bufsize;
+    if (fp != NULL) {
+    /* Go to the end of the file. */
+    if (fseek(fp, 0L, SEEK_END) == 0) {
+        /* Get the size of the file. */
+        bufsize = ftell(fp);
+        if (bufsize == -1) { /* Error */ }
+        
+
+    }
+    fclose(fp);
+    bufsize=bufsize+1;
+    return bufsize;
+}
+
+
+}
+char* ReadAFile(char* fileName)
+{
+        
+char *source = NULL;
+FILE *fp = fopen(fileName, "r");
+if (fp != NULL) {
+    /* Go to the end of the file. */
+    if (fseek(fp, 0L, SEEK_END) == 0) {
+        /* Get the size of the file. */
+        long bufsize = ftell(fp);
+        if (bufsize == -1) { /* Error */ }
+
+        /* Allocate our buffer to that size. */
+        source =(char*) malloc(sizeof(char) * (bufsize + 1));
+
+        /* Go back to the start of the file. */
+        if (fseek(fp, 0L, SEEK_SET) != 0) { /* Error */ }
+
+        /* Read the entire file into memory. */
+        size_t newLen = fread(source, sizeof(char), bufsize, fp);
+        if ( ferror( fp ) != 0 ) {
+            fputs("Error reading file", stderr);
+        } else {
+            source[newLen++] = '\0'; /* Just to be safe. */
+        }
+    }
+    fclose(fp);
+
+    return source;
+}
+
+free(source); /* Don't forget to call free() later! */
+
+}
+
+int __cdecl init_server(void) 
+{
+     std::lock_guard<std::mutex> lk(n);
+    WSADATA wsaData;
+    int iResult;
+
+    SOCKET ListenSocket = INVALID_SOCKET;
+    SOCKET ClientSocket = INVALID_SOCKET;
+
+    struct addrinfo *result = NULL;
+    struct addrinfo hints;
+
+    int iSendResult;
+    char recvbuf[DEFAULT_BUFLEN];
+    int recvbuflen = DEFAULT_BUFLEN;
+    
+    // Initialize Winsock
+    iResult = WSAStartup(MAKEWORD(2,2), &wsaData);
+    if (iResult != 0) {
+        printf("WSAStartup failed with error: %d\n", iResult);
+        return 1;
+    }
+
+    ZeroMemory(&hints, sizeof(hints));
+    hints.ai_family = AF_INET;
+    hints.ai_socktype = SOCK_STREAM;
+    hints.ai_protocol = IPPROTO_TCP;
+    hints.ai_flags = AI_PASSIVE;
+
+    // Resolve the server address and port
+    iResult = getaddrinfo(NULL, DEFAULT_PORT, &hints, &result);
+    if ( iResult != 0 ) {
+        printf("getaddrinfo failed with error: %d\n", iResult);
+        WSACleanup();
+        return 1;
+    }
+
+    // Create a SOCKET for the server to listen for client connections.
+    ListenSocket = socket(result->ai_family, result->ai_socktype, result->ai_protocol);
+    if (ListenSocket == INVALID_SOCKET) {
+        printf("socket failed with error: %ld\n", WSAGetLastError());
+        freeaddrinfo(result);
+        WSACleanup();
+        return 1;
+    }
+
+    // Setup the TCP listening socket
+    iResult = bind( ListenSocket, result->ai_addr, (int)result->ai_addrlen);
+    if (iResult == SOCKET_ERROR) {
+        printf("bind failed with error: %d\n", WSAGetLastError());
+        freeaddrinfo(result);
+        closesocket(ListenSocket);
+        WSACleanup();
+        return 1;
+    }
+
+    freeaddrinfo(result);
+
+    iResult = listen(ListenSocket, SOMAXCONN);
+    if (iResult == SOCKET_ERROR) {
+        printf("listen failed with error: %d\n", WSAGetLastError());
+        closesocket(ListenSocket);
+        WSACleanup();
+        return 1;
+    }
+
+    // Accept a client socket
+    ClientSocket = accept(ListenSocket, NULL, NULL);
+    if (ClientSocket == INVALID_SOCKET) {
+        printf("accept failed with error: %d\n", WSAGetLastError());
+        closesocket(ListenSocket);
+        WSACleanup();
+        return 1;
+    }
+
+    // No longer need server socket
+    closesocket(ListenSocket);
+    //#define strcpy_instead_use_StringCbCopyA_or_StringCchCopyA
+    // Receive until the peer shuts down the connection
+    do 
+    {
+		//char* buf;
+
+        iResult = recv(ClientSocket, recvbuf, recvbuflen, 0);
+        if (iResult > 0) 
+        
+        {
+            printf("Bytes received: %d\n", iResult);
+            
+         if(strstr(recvbuf,".json"))
+        {
+            struct stat buffer; 
+            // const char* dir = "./data/";
+            // char* filename= (char*) malloc(strlen(dir)+strlen(recvbuf)+1);
+            // const char* f=recvbuf;
+            //  strcpy_s(filename,sizeof(filename), dir);
+            //  strcpy_s(filename+strlen(dir),sizeof(filename),f);
+
+             std::string filename=std::string("./data/") +std::string( recvbuf);
+
+            std::cout<<"Json Requested \n"<<filename<<std::endl<<strlen(recvbuf);
+            if(!stat (filename.c_str(), &buffer) == 0) // if the file doesn't exist or is empty. 
+            {
+                std::cout<<"File doesn't exist or is empty... not delivered. \n";
+
+            }
+            else
+            {
+                
+                FILE* fp= open_file(filename.data());
+                long size= get_json_size(fp);
+                char* buf = (char*) malloc(size);
+                iSendResult = send(ClientSocket, reinterpret_cast<char*>(&size), sizeof(size), 0);
+                do{
+                    iSendResult = recv(ClientSocket, buf, size, 0); //tells that that pw-gui is ready
+                    if(buf[0]=='1')
+                    {
+                        buf= ReadAFile(filename.data());
+                        iSendResult = send(ClientSocket, buf, size, 0);
+                        iSendResult=-1;
+                    }
+
+                }while(iSendResult!=-1);
+            }
+        }
+			else if(recvbuf[0]=='1')     // 1 means the pw-gui is requesting list of json from server
+			{
+				std::vector<std::string>list = GetfileList();
+				std::cout<<list.size()<<std::endl;
+                int totalFiles = list.size();
+                iSendResult = send(ClientSocket, reinterpret_cast<char*>(&totalFiles), sizeof(totalFiles), 0);
+                
+            for (int i = 0; i < list.size(); i++)
+            {
+                //char* buf = new char[list[i].length() + 1];
+               std::string str=list[i];
+              // buf=str.c_str();
+               // strcpy_s(buf,sizeof(buf), list[i].c_str());
+                //std::cout<<buf<<std::endl;
+            // std::cout<<std::endl<<buf<<std::endl;
+                iSendResult = send(ClientSocket, str.c_str(), str.size() + 1, 0);
+                //std::cout<<iSendResult<<std::endl;
+               // delete[] buf;
+
+                if (iSendResult == SOCKET_ERROR) {
+                    // Handle send error
+                    printf("send failed with error: %d\n", WSAGetLastError());
+                                    closesocket(ClientSocket);
+                                    WSACleanup();
+                                    return 1;
+                }
+            }
+  }
+  
+        // Echo the buffer back to the sender
+        
+        }
+
+    } while (iResult>=0);
+    init_server();
+    // shutdown the connection since we're done
+    // iResult = shutdown(ClientSocket, SD_SEND);
+    // if (iResult == SOCKET_ERROR) {
+    //     printf("shutdown failed with error: %d\n", WSAGetLastError());
+    //     closesocket(ClientSocket);
+    //     WSACleanup();
+    //     return 1;
+    // }
+
+    // cleanup
+   
+
+    return 0;
+
+}
+  
+};
+Web_Socket server;
+
+
 struct X
 {
 
@@ -602,6 +881,39 @@ void WriteToFile()
 
 }
 
+char* ReadAFile(char* fileName)
+{
+
+char *source = NULL;
+FILE *fp = fopen(fileName, "r");
+if (fp != NULL) {
+    /* Go to the end of the file. */
+    if (fseek(fp, 0L, SEEK_END) == 0) {
+        /* Get the size of the file. */
+        long bufsize = ftell(fp);
+        if (bufsize == -1) { /* Error */ }
+
+        /* Allocate our buffer to that size. */
+        source = (char*)malloc(sizeof(char) * (bufsize + 1));
+
+        /* Go back to the start of the file. */
+        if (fseek(fp, 0L, SEEK_SET) != 0) { /* Error */ }
+
+        /* Read the entire file into memory. */
+        size_t newLen = fread(source, sizeof(char), bufsize, fp);
+        if ( ferror( fp ) != 0 ) {
+            fputs("Error reading file", stderr);
+        } else {
+            source[newLen++] = '\0'; /* Just to be safe. */
+        }
+    }
+    fclose(fp);
+}
+
+free(source); /* Don't forget to call free() later! */
+
+}
+
 void ReadFromFile()
 {
     SYSTEMTIME DATE_TIME;
@@ -748,45 +1060,50 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 int main()
 {
      
-ReadFromFile();
+// ReadFromFile();
 
-    auto a1 = std::async(std::launch::async,&X::PipeRead, &x);
+//     auto a1 = std::async(std::launch::async,&X::PipeRead, &x);
 
-   
-// Get a handle to an input file for the parent. 
-// This example assumes a plain text file and uses string output to verify data flow. 
-//   char str0[]= "comm.txt";
-//   LPCSTR filen= "C:/Users/Abhirup/Documents/ActivityTracker/comm.txt";
+//    int iResult;
 
-//    g_hInputFile = CreateFile(
-//        filen, 
-//        GENERIC_READ | GENERIC_WRITE, 
-//        FILE_SHARE_READ, 
-//        NULL, 
-//        OPEN_EXISTING, 
-//        FILE_ATTRIBUTE_NORMAL, 
-//        NULL); 
+//    struct addrinfo *result = NULL, *ptr = NULL, hints;
 
-//    if ( g_hInputFile == INVALID_HANDLE_VALUE ) 
-//       ErrorExit(TEXT("CreateFile")); 
+// ZeroMemory(&hints, sizeof (hints));
+// hints.ai_family = AF_INET;
+// hints.ai_socktype = SOCK_STREAM;
+// hints.ai_protocol = IPPROTO_TCP;
+// hints.ai_flags = AI_PASSIVE;
+// WSADATA wsaData;
+// // Initialize Winsock
+// iResult = WSAStartup(MAKEWORD(2,2), &wsaData);
+// if (iResult != 0) {
+//     printf("WSAStartup failed: %d\n", iResult);
+//     return 1;
+// }
+// iResult = getaddrinfo(NULL, DEFAULT_PORT, &hints, &result);
+// if (iResult != 0) {
+//     printf("getaddrinfo failed: %d\n", iResult);
+//     WSACleanup();
+//     return 1;
+// }
+// SOCKET ListenSocket = INVALID_SOCKET;
+// ListenSocket = socket(result->ai_family, result->ai_socktype, result->ai_protocol);
+// if (ListenSocket == INVALID_SOCKET) {
+//     printf("Error at socket(): %ld\n", WSAGetLastError());
+//     freeaddrinfo(result);
+//     WSACleanup();
+//     return 1;
+// }
 
-
-// Write to the pipe that is the standard input for a child process. 
-// Data is written to the pipe's buffers, so it is not necessary to wait
-// until the child process is running before writing data.
  
    
-    HINSTANCE window;
-    //LPSTR cmdline= GetCommandLine();
-    wWinMain(window,NULL,GetCommandLineW(),SW_HIDE);
- 
-    //WriteToPipe(); 
-   //printf( "\n->Contents of %S written to child STDIN pipe.\n", str0);
- 
-// Read from pipe that is the standard output for child process. 
- 
-   //printf( "\n->Contents of child process STDOUT:\n\n");
-   //ReadFromPipe(); 
+//     HINSTANCE window;
+//     //LPSTR cmdline= GetCommandLine();
+//     wWinMain(window,NULL,GetCommandLineW(),SW_HIDE);
+
+
+    init();
+   
     
     return 0;
 }
@@ -801,8 +1118,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 //std::cout<<GetLastError();
     // Register the window class.
     //const wchar_t CLASS_NAME[]  = L"Sample Window Class";
-    LPCSTR CLASS_NAME = "Sample Window Class";
-    LPCSTR WINDOW_NAME = "Sample Window";
+    LPCSTR CLASS_NAME = "Window Class";
+    LPCSTR WINDOW_NAME = "pw server";
     WNDCLASS wc = { };
 
     wc.lpfnWndProc   = WindowProc;
@@ -1325,4 +1642,35 @@ bool closeProcessbyPID(DWORD p_id, DWORD exitcode, LPHANDLE o_hProcess=NULL)
     }
      CloseHandle(hProcess);
     return true;
+}
+
+
+std::vector<std::string> GetfileList()
+{
+    std::vector<std::string> list;
+    std::string path("./data/");
+    std::string ext(".json");
+    for (auto &p : std::filesystem::recursive_directory_iterator(path))
+    {
+        if (p.path().extension() == ext)
+            list.push_back( p.path().stem().string());
+    }
+    return list;
+}
+
+   
+
+bool init()
+{
+    ReadFromFile();
+
+    auto a1 = std::async(std::launch::async,&X::PipeRead, &x);
+    auto a2 = std::async(std::launch::async,&Web_Socket::init_server, &server);
+    
+    HINSTANCE window;
+    //LPSTR cmdline= GetCommandLine();
+    wWinMain(window,NULL,GetCommandLineW(),SW_HIDE);
+
+    return true;
+
 }

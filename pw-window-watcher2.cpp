@@ -14,6 +14,7 @@ e.g. 3 <pid><app path>.exe <window title>
 
 */
 
+#include"pw-window-watcher2.h"
 #include<iostream>
 #include<algorithm>
 #include <fstream>
@@ -35,6 +36,8 @@ typedef struct data_block
     LPSTR app_name;
     TCHAR app_path[MAX_PATH];
 } data_block;
+
+
 int main()
 {
 	
