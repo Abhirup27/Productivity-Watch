@@ -19,13 +19,5 @@ Do note that this software is still WIP
 - Let the user set time limits to certain apps and productivity watch will automatically close the apps after it sends a notification to the user.
 - Display the usage of a set of apps over a date range.
 - Detect whether the user is idle (away from mouse or keyboard).
-
-## Donate
-I started making Productivity Watch for college project but I want to keep working on it to add more features and improve the code. If you like the software and would like to support me in making this and more helpful software, you should consider donating if you can. This money will be used to further develop this software as it will encourage me more. I also want to be an independent developer, and I am also looking forward to making games.
-
-
-You can donate to me using: 
-
-
-- [<img alt="Paypal" width="100px" src="https://upload.wikimedia.org/wikipedia/commons/a/a4/Paypal_2014_logo.png?20150315064712">](https://paypal.me/abhirup27?country.x=IN&locale.x=en_GB)
-- <img alt="Scan UPI QR" width="100px" src="https://i.imgur.com/36amylh.jpeg">
+  
+# [About Me](https://github.com/Abhirup27/Abhirup27/blob/main/README.md)
