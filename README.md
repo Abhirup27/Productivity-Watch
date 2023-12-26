@@ -21,7 +21,7 @@ Do note that this software is still WIP
 - Detect whether the user is idle (away from mouse or keyboard).
 
 ## Donate
-I started making Productivity Watch for college project but I want to keep working on it and add more features and improve the code. If you like the software and would like to support me in making this and more helpful software, you should consider donating if you can. This money will be used to further develop this software as it will encourage me more. I also want to be an independent developer, and I am also looking forward to making games.
+I started making Productivity Watch for college project but I want to keep working on it to add more features and improve the code. If you like the software and would like to support me in making this and more helpful software, you should consider donating if you can. This money will be used to further develop this software as it will encourage me more. I also want to be an independent developer, and I am also looking forward to making games.
 
 
 You can donate to me using: 
