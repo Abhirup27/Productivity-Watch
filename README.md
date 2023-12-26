@@ -3,7 +3,7 @@ Productivity Watch is an open source software designed to monitor and record the
 Productivity Watch is developed by me only and I don't consider myself an expert at designing software, so if you want to contribute to this project feel free to do so. I am going to improve this software and introduce new features. 
 This is a standalone software, it does not need any web browser or internet connection to function and uses the Win32 API and other open source libraries. **It does not share the data it records locally.**
 
-$${\color{red} Right now you need to compile two things separately, the pw-server.cpp using the g++ command and the GUI frontend by running make. I will be updating the project structure soon and this won't be an issue.}$$
+$${\color{red} Right \space now \space you \space need \space to \space compile \space two \space things \space separately \space, \space the \space pw-server.cpp \space using \space the \space g++ \space command \space and \space the \space GUI \space frontend \space by \space running \space make. \space I \space will \space be \space updating \space the \space project \space structure \space soon \space and \space this \space won't \space be \space an \space issue.}$$
 
 ## Libraries-used
 - [ImGui](https://github.com/ocornut/imgui)
