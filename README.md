@@ -5,7 +5,7 @@ This is a standalone software, it does not need any web browser or internet conn
 
 $${\color{red} Right \space now \space you \space need \space to \space compile \space two \space things \space separately \space, \space the \space pw-server.cpp \space using \space the \space g++ \space command }$$
 
-$${\color{red} and \space the \space GUI \space frontend \space by \space running \space make. \newline I \space will \space be \space updating \space the \space project \space structure \space soon }$$
+$${\color{red} and \space the \space GUI \space frontend \space by \space running \space make. I \space will \space be \space updating \space the \space project \space structure \space soon }$$
 
 $${\color{red} and \space this \space won't \space be \space an \space issue.}$$
 
